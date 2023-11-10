@@ -6,6 +6,7 @@ import io.swagger.v3.core.util.Json;
 import it.ficr.elements.Athlete;
 import it.ficr.elements.Event;
 import it.ficr.elements.Result;
+import it.ficr.elements.Society;
 import it.ficr.exceptions.MalformattedElementException;
 import it.ficr.repositories.ResultRepository;
 import org.slf4j.Logger;
@@ -34,6 +35,9 @@ public class ResultCatalogueService {
     @Autowired
     private EventCatalogueService eventCatalogueService;
 
+
+    @Autowired
+    private SocietyCatalogueService societyCatalogueService;
 
 
     public void createResult(Result r){
@@ -65,7 +69,8 @@ public class ResultCatalogueService {
 
                while (resultRowIterator.hasNext()){
                    JsonNode result = resultRowIterator.next();
-
+                   Society society = societyCatalogueService.buildSociety(result.get("TeamDescrIta").asText(),
+                           result.get("PlaTeamCod").asText());
                    String time = result.get("MemPrest").textValue();
                    Result nResult = new Result(null,
                            time,
@@ -73,7 +78,10 @@ public class ResultCatalogueService {
                            categoryCode,
                            categoryName,
                            competitionCode,
-                           competitionName);
+                           competitionName,
+                           society);
+                   society.addResult(nResult);
+
 
                    createResult(nResult);
 
@@ -95,8 +103,10 @@ public class ResultCatalogueService {
                    nResult.setCrew(crew);
                    for(Athlete athlete : crew){
                        athlete.addResult(nResult);
+                       athlete.addSociety(society);
                        athleteCatalogueService.updateAthlete(athlete);
                    }
+                   societyCatalogueService.updateSociety(society);
                    resultRepository.saveAndFlush(nResult);
                    results.add(nResult);
                    event.addResult(nResult);

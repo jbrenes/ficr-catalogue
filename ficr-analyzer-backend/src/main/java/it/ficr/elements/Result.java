@@ -24,6 +24,10 @@ public class Result {
     @JsonBackReference
     private Event event;
 
+    @ManyToOne
+    @JsonBackReference
+    private Society society;
+
     private String result;
 
     private String competitionName;
@@ -38,7 +42,7 @@ public class Result {
         return result;
     }
 
-    public Result(List<Athlete> crew, String result, Event event, String categoryCode, String categoryName, String competitionCode, String competitionName) {
+    public Result(List<Athlete> crew, String result, Event event, String categoryCode, String categoryName, String competitionCode, String competitionName, Society society) {
         if(crew!=null) this.crew = crew;
         this.result = result;
         this.event=event;
@@ -46,6 +50,7 @@ public class Result {
         this.competitionName=competitionName;
         this.categoryCode=categoryCode;
         this.categoryName=categoryName;
+        this.society=society;
     }
 
     public Event getEvent() {

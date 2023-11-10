@@ -127,6 +127,9 @@ public class Athlete {
         return society.isPresent();
     }
 
+    public void addSociety(Society soc){
+        societies.add(soc);
+    }
 
     private UUID generateIdentifier(){
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");

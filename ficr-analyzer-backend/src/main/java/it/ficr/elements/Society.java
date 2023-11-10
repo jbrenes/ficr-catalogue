@@ -1,12 +1,14 @@
 package it.ficr.elements;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.persistence.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Entity
 public class Society {
@@ -16,16 +18,29 @@ public class Society {
     private Long id;
 
     private String name;
+    private String societyCode;
 
     private UUID societyIdentifier;
 
+    @OneToMany(mappedBy="society")
+    private List<Result> results = new ArrayList<>();
+
     @ManyToMany
+    @JsonBackReference
     private List<Athlete> athletes;
 
-    public Society(String name, List<Athlete> athletes) {
+    public Society() {
+    }
+
+
+
+    @JsonCreator
+    public Society(@JsonProperty("name") String name,@JsonProperty("societyCode") String societyCode, @JsonProperty("athletes") List<Athlete> athletes) {
         this.name = name;
-        this.societyIdentifier = UUID.fromString(name);
-        this.athletes = athletes;
+        this.societyCode=societyCode;
+        this.societyIdentifier = UUID.nameUUIDFromBytes(societyCode.getBytes());
+
+        if(athletes!=null) this.athletes = athletes;
     }
 
     public String getName() {
@@ -41,12 +56,23 @@ public class Society {
     }
 
 
+    public void addResult(Result r){
+        results.add(r);
+    }
 
     public List<Athlete> getAthletes() {
         return athletes;
     }
 
-    public void setAthletes(List<Athlete> athletes) {
-        this.athletes = athletes;
+    public String getSocietyCode() {
+        return societyCode;
+    }
+
+    @JsonProperty
+    public List<String> societyAthletes(){
+        return athletes.stream().map(a -> a.getName()+ " "+a.getSurname()).collect(Collectors.toList());
+    }
+    public void addAthlete(Athlete athlete) {
+        this.athletes.add(athlete);
     }
 }

@@ -1,5 +1,6 @@
 package it.ficr.services;
 
+import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.JsonNode;
 import it.ficr.elements.Athlete;
 import it.ficr.exceptions.MalformattedElementException;
@@ -52,11 +53,11 @@ public class AthleteCatalogueService {
 
         //TODO implement JPA level filters
         if(name!=null && !name.isEmpty()){
-            athletes = athletes.stream().filter(a -> a.getName().equals(name)).collect(Collectors.toList());
+            athletes = athletes.stream().filter(a -> a.getName().equalsIgnoreCase(name)).collect(Collectors.toList());
         }
 
         if(surname!=null && !surname.isEmpty()){
-            athletes = athletes.stream().filter(a -> a.getSurname().equals(surname)).collect(Collectors.toList());
+            athletes = athletes.stream().filter(a -> a.getSurname().equalsIgnoreCase(surname)).collect(Collectors.toList());
         }
 
         if(year!=null){
@@ -76,7 +77,11 @@ public class AthleteCatalogueService {
 
 
         try {
-            Date date = formatter.parse(node.get("PlaBirth").asText());
+            Date date  = new Date(Long.MIN_VALUE);
+            if(!node.get("PlaBirth").asText().isEmpty()){
+                date = formatter.parse(node.get("PlaBirth").asText());
+            }
+
             log.info("Building athlete {} {} {}", name, surname, date);
             Athlete nAthlete = new Athlete(name, surname, date);
             Optional<Athlete> dbAthlete = athleteRepository.findByAthleteIdentifier(nAthlete.getAthleteIdentifier());

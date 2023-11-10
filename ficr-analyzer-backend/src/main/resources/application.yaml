@@ -17,6 +17,8 @@ spring:
     url: jdbc:h2:mem:service-lcm
     username: sa
     password: password
+  jackson:
+    date-format: dd/MM/yyyy
 
   jpa:
     spring.jpa.database-platform: org.hibernate.dialect.H2Dialect
