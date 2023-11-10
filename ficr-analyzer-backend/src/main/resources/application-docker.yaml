@@ -1,0 +1,40 @@
+# Web Server config
+server:
+  port: 8080
+
+# Springdoc config
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui
+  version: 1.0
+
+# DataSource configuration
+spring:
+  datasource:
+    driverClassName: org.h2.Driver
+    url: jdbc:h2:mem:service-lcm
+    username: sa
+    password: password
+
+  jpa:
+    spring.jpa.database-platform: org.hibernate.dialect.H2Dialect
+    show-sql: false
+    hibernate:
+      ddl-auto: create
+
+
+  output:
+    ansi:
+      enabled: ALWAYS
+
+vsbcatalogue:
+  base_url: ${VSB_CATALOGUE_BASEURL}
+
+plugins:
+  compute_lcm:
+    base_url: ${COMPUTE_LCM_BASEURL}
+  compute_allocation:
+    default_node: ${DEFAULT_NODE}
+    default_cluster: ${DEFAULT_CLUSTER}
