@@ -1,0 +1,270 @@
+openapi: 3.0.1
+info:
+  title: OpenAPI definition
+  version: v0
+servers:
+  - url: http://localhost:8080
+    description: Generated server url
+paths:
+  /api/v1/ficr/results/onboard:
+    post:
+      tags:
+        - results
+      summary: Onboard Results file
+      description: Endpoint to onboard Results file
+      operationId: onboard
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+                - file
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '201':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiError'
+  /api/v1/ficr/results/:
+    get:
+      tags:
+        - results
+      summary: Get Results
+      description: Endpoint to query registered Results
+      operationId: getAllResults
+      parameters:
+        - name: categoryCode
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: categoryName
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: competitionCode
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: competitionName
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Result'
+        '404':
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiError'
+  /api/v1/ficr/events/:
+    get:
+      tags:
+        - events
+      summary: Get Events
+      description: Endpoint to query registered Events
+      operationId: getAllEvents
+      parameters:
+        - name: name
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: place
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: year
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Event'
+        '404':
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiError'
+  /api/v1/ficr/athletes/:
+    get:
+      tags:
+        - athletes
+      summary: Get Athletes
+      description: Endpoint to query registered Athletes
+      operationId: getAllAthletes
+      parameters:
+        - name: name
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: surname
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: society
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: year
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Athlete'
+        '404':
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiError'
+components:
+  schemas:
+    ApiError:
+      type: object
+    Athlete:
+      type: object
+      properties:
+        name:
+          type: string
+        surname:
+          type: string
+        birthday:
+          type: string
+          format: date-time
+        fickId:
+          type: string
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Result'
+        societies:
+          type: array
+          items:
+            $ref: '#/components/schemas/Society'
+        id:
+          type: integer
+          format: int64
+        athleteIdentifier:
+          type: string
+          format: uuid
+    Event:
+      type: object
+      properties:
+        name:
+          type: string
+        place:
+          type: string
+        date:
+          type: string
+          format: date-time
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Result'
+        eventIdentifier:
+          type: string
+          format: uuid
+    Result:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        crew:
+          type: array
+          items:
+            $ref: '#/components/schemas/Athlete'
+        event:
+          $ref: '#/components/schemas/Event'
+        result:
+          type: string
+        competitionName:
+          type: string
+        competitionCode:
+          type: string
+        categoryCode:
+          type: string
+        categoryName:
+          type: string
+        crewNames:
+          type: array
+          items:
+            type: string
+        eventName:
+          type: string
+    Society:
+      type: object
+      properties:
+        name:
+          type: string
+        societyIdentifier:
+          type: string
+          format: uuid
+        athletes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Athlete'

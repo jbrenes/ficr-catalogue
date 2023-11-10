@@ -1,6 +1,15 @@
 package it.ficr.nbi;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import it.ficr.elements.Event;
+import it.ficr.elements.Result;
+import it.ficr.exceptions.ApiError;
 import it.ficr.services.ResultCatalogueService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +24,6 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping("/api/v1/ficr/results")
-@Tag(name = "FICR Results Catalogue API")
 
 public class ResultsRestController {
 
@@ -24,6 +32,19 @@ public class ResultsRestController {
 
     @Autowired
     private ResultCatalogueService resultCatalogueService;
+
+
+    @Operation(
+            summary = "Onboard Results file",
+            description = "Endpoint to onboard Results file",
+            tags = {"results"}
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "OK"),
+
+            @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                    content = @Content(schema = @Schema(implementation = ApiError.class))),
+    })
 
     @PostMapping("/onboard")
     private ResponseEntity onboard(@RequestParam("file") MultipartFile file){
@@ -42,12 +63,29 @@ public class ResultsRestController {
     }
 
 
+    @Operation(
+            summary = "Get Results",
+            description = "Endpoint to query registered Results",
+            tags = {"results"}
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK",
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation =  Result.class)))),
+            @ApiResponse(responseCode = "404", description = "Not Found",
+                    content = @Content(schema = @Schema(implementation = ApiError.class))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                    content = @Content(schema = @Schema(implementation = ApiError.class))),
+    })
+
     @GetMapping("/")
-    private ResponseEntity getAllResults(){
-        log.debug("Received result file onboard request");
+    private ResponseEntity getAllResults(@RequestParam(required = false) String categoryCode,
+                                         @RequestParam(required = false) String categoryName,
+                                         @RequestParam(required = false) String competitionCode,
+                                         @RequestParam(required = false) String competitionName){
+
         try {
 
-            return  new ResponseEntity(resultCatalogueService.getResults(), HttpStatus.OK);
+            return  new ResponseEntity(resultCatalogueService.getResults(categoryCode, categoryName, competitionCode, competitionName), HttpStatus.OK);
         } catch (Exception e) {
             log.error("Error", e);
             return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);

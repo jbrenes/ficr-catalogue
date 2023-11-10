@@ -114,7 +114,7 @@ public class ResultCatalogueService {
 
 
 
-    public List<Result> getResults(){
+    public List<Result> getResults(String categoryCode, String categoryName, String competitionCode, String competitionName){
         return resultRepository.findAll();
     }
 }

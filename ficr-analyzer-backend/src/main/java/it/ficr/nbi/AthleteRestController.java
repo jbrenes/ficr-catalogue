@@ -23,7 +23,7 @@ import java.io.File;
 
 @RestController
 @RequestMapping("/api/v1/ficr/athletes")
-@Tag(name = "FICR Analyzer API")
+
 
 public class AthleteRestController {
 
