@@ -22,12 +22,14 @@ import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
 @SpringBootApplication
 @EnableJpaRepositories(basePackages = { "it.ficr" })
 @EntityScan(basePackages = { "it.ficr" })
 @ComponentScan(basePackages = { "it.ficr" })
+@EnableAsync
 public class FicrAnalyzerApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(FicrAnalyzerApplication.class, args);

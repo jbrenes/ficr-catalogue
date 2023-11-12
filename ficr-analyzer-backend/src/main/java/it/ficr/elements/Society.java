@@ -2,6 +2,7 @@ package it.ficr.elements;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
@@ -11,10 +12,12 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Entity
+
 public class Society {
 
     @Id
     @GeneratedValue
+    @JsonIgnore
     private Long id;
 
     private String name;
@@ -22,12 +25,12 @@ public class Society {
 
     private UUID societyIdentifier;
 
-    @OneToMany(mappedBy="society")
+    @OneToMany(mappedBy="society", fetch = FetchType.EAGER)
     private List<Result> results = new ArrayList<>();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JsonBackReference
-    private List<Athlete> athletes;
+    private List<Athlete> athletes = new ArrayList<>();
 
     public Society() {
     }

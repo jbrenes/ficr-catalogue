@@ -1,6 +1,7 @@
 package it.ficr.elements;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
@@ -12,10 +13,10 @@ import java.util.stream.Collectors;
 public class Result {
     @Id
     @GeneratedValue
-
+    @JsonIgnore
     private Long id;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JsonBackReference
 
     private List<Athlete> crew = new ArrayList<>();
@@ -42,7 +43,9 @@ public class Result {
         return result;
     }
 
-    public Result(List<Athlete> crew, String result, Event event, String categoryCode, String categoryName, String competitionCode, String competitionName, Society society) {
+    private String resultUrl;
+
+    public Result(List<Athlete> crew, String result, Event event, String categoryCode, String categoryName, String competitionCode, String competitionName, Society society, String resultUrl) {
         if(crew!=null) this.crew = crew;
         this.result = result;
         this.event=event;
@@ -51,6 +54,7 @@ public class Result {
         this.categoryCode=categoryCode;
         this.categoryName=categoryName;
         this.society=society;
+        this.resultUrl=resultUrl;
     }
 
     public Event getEvent() {
@@ -107,6 +111,14 @@ public class Result {
             return event.getName()+" "+event.getDate();
         }else return "";
 
+    }
+
+    public Society getSociety() {
+        return society;
+    }
+
+    public String getResultUrl() {
+        return resultUrl;
     }
 }
 

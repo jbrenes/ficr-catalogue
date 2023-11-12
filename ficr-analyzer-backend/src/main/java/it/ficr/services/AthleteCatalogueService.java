@@ -74,15 +74,24 @@ public class AthleteCatalogueService {
         String name = node.get("PlaName").asText();
         String surname = node.get("PlaSurname").asText();
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat formatterYear= new SimpleDateFormat("yyyy");
 
 
-        try {
             Date date  = new Date(Long.MIN_VALUE);
             if(!node.get("PlaBirth").asText().isEmpty()){
-                date = formatter.parse(node.get("PlaBirth").asText());
+                String dateTxt = node.get("PlaBirth").asText();
+                try {
+                    if (dateTxt.length() > 4) {
+                        date = formatter.parse(dateTxt);
+                    } else {
+                        date = formatterYear.parse(dateTxt);
+                    }
+                }catch (Exception e){
+                    log.warn("Could not read date: {}", dateTxt);
+                }
             }
 
-            log.info("Building athlete {} {} {}", name, surname, date);
+            log.debug("Building athlete {} {} {}", name, surname, date);
             Athlete nAthlete = new Athlete(name, surname, date);
             Optional<Athlete> dbAthlete = athleteRepository.findByAthleteIdentifier(nAthlete.getAthleteIdentifier());
             if(dbAthlete.isPresent()){
@@ -91,10 +100,6 @@ public class AthleteCatalogueService {
                 athleteRepository.saveAndFlush(nAthlete);
                 return nAthlete;
             }
-        } catch (ParseException e) {
-            log.error("Error", e);
-            throw new MalformattedElementException("Malformatted element athlete:"+node);
-        }
     }
 
     public void deleteAthlete(String identifier){

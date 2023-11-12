@@ -2,21 +2,21 @@ package it.ficr.elements;
 
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
+import jakarta.persistence.*;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Entity
 public class Athlete {
 
     @Id
     @GeneratedValue
+    @JsonIgnore
     private Long id;
     private String name;
     private String surname;
@@ -27,14 +27,18 @@ public class Athlete {
     private String fickId;
     private UUID athleteIdentifier;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JsonManagedReference
 
     private List<Result> results = new ArrayList<>();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JsonManagedReference
     private List<Society> societies = new ArrayList<>();
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JsonIgnore
+    private List<Event> events = new ArrayList<>();
 
 
 
@@ -58,12 +62,14 @@ public class Athlete {
                    @JsonProperty("birthday") Date birthday,
                    @JsonProperty("fickId")String fickId,
                    @JsonProperty("results") List<Result> results,
-                   @JsonProperty("societies") List<Society> societies) {
+                   @JsonProperty("societies") List<Society> societies,
+                   @JsonProperty("events") List<Event> events) {
         this.name = name;
         this.birthday = birthday;
         this.fickId = fickId;
         if(results!=null) this.results = results;
         if(societies!=null) this.societies= societies;
+        if(events!=null) this.events=events;
         this.surname= surname;
         this.athleteIdentifier = generateIdentifier();
     }
@@ -122,6 +128,13 @@ public class Athlete {
         this.surname = surname;
     }
 
+    public void addEvent(Event event){
+        Optional<Event> cEvent = events.stream().filter(e -> e.getEventIdentifier().equals(event.getEventIdentifier())).findAny();
+        if(!cEvent.isPresent()){
+            events.add(event);
+        }
+    }
+
     public boolean inSociety(String societyName){
         Optional<Society> society = societies.stream().filter(s ->s.getName().equals(societyName)).findAny();
         return society.isPresent();
@@ -131,6 +144,10 @@ public class Athlete {
         societies.add(soc);
     }
 
+    @JsonProperty("participations")
+    public List<String> eventParticipations(){
+        return events.stream().map(e->e.getName()+" "+e.getYear()).collect(Collectors.toList());
+    }
     private UUID generateIdentifier(){
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         String seed = name+surname+ formatter.format(birthday);

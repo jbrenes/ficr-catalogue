@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import it.ficr.elements.Event;
 import it.ficr.elements.Result;
 import it.ficr.exceptions.ApiError;
+import it.ficr.services.EventCatalogueService;
 import it.ficr.services.ResultCatalogueService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +33,8 @@ public class ResultsRestController {
 
     @Autowired
     private ResultCatalogueService resultCatalogueService;
+
+
 
 
     @Operation(
@@ -59,6 +62,56 @@ public class ResultsRestController {
            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
+
+    }
+
+    @Operation(
+            summary = "Onboard Season",
+            description = "Endpoint to onboard Season",
+            tags = {"results"}
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "OK"),
+
+            @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                    content = @Content(schema = @Schema(implementation = ApiError.class))),
+    })
+
+    @PostMapping("/onboardSeason/{season}")
+    private ResponseEntity onboardSeason(@PathVariable(value="season") Integer season){
+        log.debug("Received season onboard request");
+        try {
+            resultCatalogueService.onboardSeason(season.intValue());
+            return  new ResponseEntity(HttpStatus.OK);
+        } catch (Exception e) {
+            log.error("Error", e);
+            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
+    @Operation(
+            summary = "Onboard Event",
+            description = "Endpoint to onboard Event",
+            tags = {"results"}
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "OK"),
+
+            @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                    content = @Content(schema = @Schema(implementation = ApiError.class))),
+    })
+
+    @PostMapping("/onboard/{codPub}")
+    private ResponseEntity onboard(@PathVariable(value="codPub") String codPub){
+        log.debug("Received event onboard request");
+        try {
+            resultCatalogueService.onboardEvent(codPub);
+            return  new ResponseEntity(HttpStatus.OK);
+        } catch (Exception e) {
+            log.error("Error", e);
+            return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
 
     }
 
