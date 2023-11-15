@@ -10,6 +10,7 @@ import java.util.UUID;
 public interface EventRepository extends JpaRepository<Event, Long > {
 
 
+    Optional<Event> findByNameAndPlaceAndDate(String name, String place, Date date);
     Optional<Event> findByEventIdentifier(UUID eventIdentifier);
 
 }

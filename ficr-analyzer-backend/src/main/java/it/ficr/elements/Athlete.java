@@ -7,17 +7,15 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 
-import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Entity
 public class Athlete {
 
     @Id
     @GeneratedValue
-    @JsonIgnore
     private Long id;
+
     private String name;
     private String surname;
 
@@ -25,58 +23,41 @@ public class Athlete {
     private Date birthday;
 
     private String fickId;
+
     private UUID athleteIdentifier;
 
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany()
     @JsonManagedReference
 
     private List<Result> results = new ArrayList<>();
 
-    @ManyToMany(fetch = FetchType.EAGER)
+
+    private Set<UUID> events = new HashSet<>();
+
+    @ManyToMany()
     @JsonManagedReference
     private List<Society> societies = new ArrayList<>();
 
-    @ManyToMany(fetch = FetchType.EAGER)
+
+
     @JsonIgnore
-    private List<Event> events = new ArrayList<>();
-
-
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "athlete_info_identifier")
+    private AthleteInfo athleteInfo;
 
 
     @JsonCreator()
-    public Athlete(@JsonProperty("name") String name,
+    public Athlete(@JsonProperty("athleteIdentifier") UUID athleteIdentifier,
+            @JsonProperty("name") String name,
                    @JsonProperty("surname") String surname,
                    @JsonProperty("birthday") Date birthday) {
         this.name = name;
         this.birthday = birthday;
-        this.fickId = fickId;
-        if(results!=null) this.results = results;
-        if(societies!=null) this.societies= societies;
         this.surname= surname;
-        this.athleteIdentifier = generateIdentifier();
+        this.athleteIdentifier = athleteIdentifier;
     }
 
-    @JsonCreator()
-    public Athlete(@JsonProperty("name") String name,
-                   @JsonProperty("surname") String surname,
-                   @JsonProperty("birthday") Date birthday,
-                   @JsonProperty("fickId")String fickId,
-                   @JsonProperty("results") List<Result> results,
-                   @JsonProperty("societies") List<Society> societies,
-                   @JsonProperty("events") List<Event> events) {
-        this.name = name;
-        this.birthday = birthday;
-        this.fickId = fickId;
-        if(results!=null) this.results = results;
-        if(societies!=null) this.societies= societies;
-        if(events!=null) this.events=events;
-        this.surname= surname;
-        this.athleteIdentifier = generateIdentifier();
-    }
 
-    public Long getId() {
-        return id;
-    }
 
     public UUID getAthleteIdentifier() {
         return athleteIdentifier;
@@ -88,9 +69,7 @@ public class Athlete {
 
 
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+
 
     public String getName() {
         return name;
@@ -128,11 +107,9 @@ public class Athlete {
         this.surname = surname;
     }
 
-    public void addEvent(Event event){
-        Optional<Event> cEvent = events.stream().filter(e -> e.getEventIdentifier().equals(event.getEventIdentifier())).findAny();
-        if(!cEvent.isPresent()){
-            events.add(event);
-        }
+    public void addEvent(EventInfo event){
+        //this.athleteInfo.a
+        this.events.add(event.getEventIdentifier());
     }
 
     public boolean inSociety(String societyName){
@@ -144,16 +121,22 @@ public class Athlete {
         societies.add(soc);
     }
 
-    @JsonProperty("participations")
-    public List<String> eventParticipations(){
-        return events.stream().map(e->e.getName()+" "+e.getYear()).collect(Collectors.toList());
+    public Set<UUID> getEvents() {
+        return events;
     }
-    private UUID generateIdentifier(){
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        String seed = name+surname+ formatter.format(birthday);
-        seed = seed.replaceAll("\\s", "");
-        return UUID.nameUUIDFromBytes(seed.getBytes());
+
+    public List<Society> getSocieties() {
+        return societies;
     }
+
+    public void setAthleteInfo(AthleteInfo athleteInfo) {
+        this.athleteInfo = athleteInfo;
+    }
+
+    public AthleteInfo getAthleteInfo() {
+        return athleteInfo;
+    }
+
     public Athlete() {
     }
 }

@@ -29,7 +29,6 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 @EnableJpaRepositories(basePackages = { "it.ficr" })
 @EntityScan(basePackages = { "it.ficr" })
 @ComponentScan(basePackages = { "it.ficr" })
-@EnableAsync
 public class FicrAnalyzerApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(FicrAnalyzerApplication.class, args);

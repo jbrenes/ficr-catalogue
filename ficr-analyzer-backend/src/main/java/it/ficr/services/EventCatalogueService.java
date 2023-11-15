@@ -5,7 +5,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import it.ficr.elements.Event;
+import it.ficr.elements.EventInfo;
+import it.ficr.exceptions.ElementNotFoundException;
 import it.ficr.exceptions.MalformattedElementException;
+import it.ficr.repositories.EventInfoRepository;
 import it.ficr.repositories.EventRepository;
 import org.hibernate.event.service.spi.EventListenerRegistrationException;
 import org.slf4j.Logger;
@@ -28,6 +31,8 @@ public class EventCatalogueService {
 
     @Autowired
     private EventRepository eventRepository;
+    @Autowired
+    private EventInfoRepository eventInfoRepository;
 
 
 
@@ -38,13 +43,19 @@ public class EventCatalogueService {
     }
 
     public Event updateEvent(Event event){
-        eventRepository.saveAndFlush(event);
+        try{
+            eventInfoRepository.saveAndFlush(event.getEventInfo());
+            eventRepository.saveAndFlush(event);
+        }catch(Exception e){
+            log.error("Error", e);
+        }
+
         return event;
     }
 
 
 
-    public Event buildEvent(String name, JsonNode node) throws MalformattedElementException {
+    public Event buildEvent(String name, JsonNode node, String url) throws MalformattedElementException {
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         SimpleDateFormat formatterYear = new SimpleDateFormat("yyyy");
 
@@ -62,19 +73,29 @@ public class EventCatalogueService {
         }
 
         String place = node.get("Place").asText();
-        Event nEvent = new Event(name, place, date);
-        Optional<Event> dbEvent = eventRepository.findByEventIdentifier(nEvent.getEventIdentifier());
+
+        Optional<EventInfo> dbEvent = null;
+        if(url!=null && !url.isEmpty()){
+            dbEvent=eventInfoRepository.findByUrl(url);
+        }else{
+            dbEvent=eventInfoRepository.findByNameAndPlaceAndDate(name, place, date);
+        }
         if(dbEvent.isPresent())
-            return dbEvent.get();
+            return eventRepository.findByEventIdentifier(dbEvent.get().getEventIdentifier()).get();
         else{
+            EventInfo info = new EventInfo(name, place, date, url);
+            eventInfoRepository.saveAndFlush(info);
+            Event nEvent = new Event(info.getEventIdentifier(), name, place, date);
+            nEvent.setEventInfo(info);
+
             eventRepository.saveAndFlush(nEvent);
             return nEvent;
         }
 
     }
 
-    public List<Event> getEvents(String name, String place, Integer year) {
-        List<Event> events = eventRepository.findAll();
+    public List<EventInfo> getEvents(String name, String place, Integer year) {
+        List<EventInfo> events = eventInfoRepository.findAll();
         if(name!=null && !name.isEmpty()){
             events = events.stream().filter(e -> e.getName().toLowerCase().contains(name.toLowerCase())).collect(Collectors.toList());
         }
@@ -88,5 +109,12 @@ public class EventCatalogueService {
         }
 
         return events;
+    }
+
+    public Event getEvent(UUID eventIdentifier) throws ElementNotFoundException {
+        Optional<Event> event = eventRepository.findByEventIdentifier(eventIdentifier);
+        if(event.isPresent()){
+            return event.get();
+        }else throw new ElementNotFoundException("Event not found:"+eventIdentifier);
     }
 }

@@ -14,6 +14,7 @@ import it.ficr.repositories.ResultRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -43,6 +44,8 @@ public class ResultCatalogueService {
     @Autowired
     private SocietyCatalogueService societyCatalogueService;
 
+    @Value("${onboard-season-enable:false}")
+    private boolean enableSeasonOnboarding;
 
     public void createResult(Result r){
         log.debug("Received request to create result");
@@ -55,25 +58,27 @@ public class ResultCatalogueService {
     }
 
 
+
     @Async
     public void onboardSeason(int year) throws MalformattedElementException {
         log.info("Received request to onboard season:{}", year);
-        String urlTemplate= "https://apimanvarie.ficr.it/VAR/mpcache-30/get/schedule/%s/*/19";
-        String url = String.format(urlTemplate, year);
-        RestTemplate restTemplate = new RestTemplate();
-        String  response = restTemplate.getForObject(url, String.class);
+        if(enableSeasonOnboarding){
+            String urlTemplate= "https://apimanvarie.ficr.it/VAR/mpcache-30/get/schedule/%s/*/19";
+            String url = String.format(urlTemplate, year);
+            RestTemplate restTemplate = new RestTemplate();
+            String  response = restTemplate.getForObject(url, String.class);
 
-        ObjectMapper mapper = new ObjectMapper();
+            ObjectMapper mapper = new ObjectMapper();
 
 
-        JsonNode rootNode = null;
-        try {
-            rootNode = mapper.readValue(response, JsonNode.class);
-        } catch (JsonProcessingException e) {
-            log.error("Error",e);
-            return;
-        }
-        if(rootNode.has("data")) {
+            JsonNode rootNode = null;
+            try {
+                rootNode = mapper.readValue(response, JsonNode.class);
+            } catch (JsonProcessingException e) {
+                log.error("Error",e);
+                return;
+            }
+            if(rootNode.has("data")) {
                 log.info("Iterating over data");
                 Iterator<JsonNode> resultIterator = rootNode.get("data").elements();
                 while(resultIterator.hasNext()){
@@ -82,9 +87,12 @@ public class ResultCatalogueService {
                 }
             }
 
+        }else    throw new MalformattedElementException("Not supported");
+
 
 
     }
+
 
     public void onboardEvent(String codePub) {
         String url = "https://apicanoavelocita.ficr.it/CAV/mpcache-30/get/programdate/"+codePub;
@@ -164,8 +172,8 @@ public class ResultCatalogueService {
             JsonNode data = resultsObject.get("data");
             Event event=null;
             try {
-                event = eventCatalogueService.buildEvent(data.get("Export").get("ExpName").asText(), data.get("Event"));
-                event.addUrl(eventUrl);
+                event = eventCatalogueService.buildEvent(data.get("Export").get("ExpName").asText(), data.get("Event"), eventUrl);
+              //  event.addUrl(eventUrl);
 
             }catch (Exception e){
                 log.warn("Could not read Event data from: {}", raceUrl, e);
@@ -195,10 +203,12 @@ public class ResultCatalogueService {
                             competitionName,
                             society,
                             raceUrl);
+
                     society.addResult(nResult);
 
 
                     createResult(nResult);
+                    event.addResult(nResult);
 
                     List<Athlete> crew = new ArrayList<>();
 
@@ -221,15 +231,17 @@ public class ResultCatalogueService {
                         if(!athlete.inSociety(society.getName())){
                             athlete.addSociety(society);
                         }
-                        athlete.addEvent(event);
-                        event.addAthlete(athlete);
+                        athlete.addEvent(event.getEventInfo());
+                        event.addAthlete(athlete.getAthleteInfo());
+                        eventCatalogueService.updateEvent(event);
+
                         athleteCatalogueService.updateAthlete(athlete);
                     }
                     societyCatalogueService.updateSociety(society);
                     resultRepository.saveAndFlush(nResult);
                     results.add(nResult);
-                    event.addResult(nResult);
-                    eventCatalogueService.updateEvent(event);
+
+
                 }
 
             }

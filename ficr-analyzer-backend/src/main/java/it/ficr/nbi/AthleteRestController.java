@@ -8,7 +8,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import it.ficr.elements.Athlete;
+import it.ficr.elements.AthleteInfo;
 import it.ficr.exceptions.ApiError;
+import it.ficr.exceptions.ElementNotFoundException;
 import it.ficr.services.AthleteCatalogueService;
 import it.ficr.services.ResultCatalogueService;
 import org.slf4j.Logger;
@@ -20,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/ficr/athletes")
@@ -41,7 +44,7 @@ public class AthleteRestController {
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "OK",
-                    content = @Content(array = @ArraySchema(schema = @Schema(implementation =  Athlete.class)))),
+                    content = @Content(array = @ArraySchema(schema = @Schema(implementation =  AthleteInfo.class)))),
             @ApiResponse(responseCode = "404", description = "Not Found",
                     content = @Content(schema = @Schema(implementation = ApiError.class))),
             @ApiResponse(responseCode = "500", description = "Internal Server Error",
@@ -57,6 +60,37 @@ public class AthleteRestController {
 
             return  new ResponseEntity(athleteCatalogueService.getAthletes(name, surname, society, year), HttpStatus.OK);
         } catch (Exception e) {
+            log.error("Error", e);
+            return new ResponseEntity(new ApiError(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+
+    }
+
+
+    @Operation(
+            summary = "Get Athlete",
+            description = "Endpoint to retrieve athlete",
+            tags = {"athletes"}
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK",
+                    content = @Content(schema = @Schema(implementation =  Athlete.class))),
+            @ApiResponse(responseCode = "404", description = "Not Found",
+                    content = @Content(schema = @Schema(implementation = ApiError.class))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error",
+                    content = @Content(schema = @Schema(implementation = ApiError.class))),
+    })
+    @GetMapping("/{athleteIdentifier}")
+    private ResponseEntity getAthletes(@PathVariable(value="athleteIdentifier") UUID athleteIdentifier){
+        log.debug("Received request to retrieve athlete {}", athleteIdentifier);
+        try {
+
+            return  new ResponseEntity(athleteCatalogueService.getAthlete(athleteIdentifier), HttpStatus.OK);
+        }catch(ElementNotFoundException e){
+            log.warn("Athlete not found", e.getMessage());
+            return new ResponseEntity(new ApiError(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }catch (Exception e) {
             log.error("Error", e);
             return new ResponseEntity(new ApiError(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
