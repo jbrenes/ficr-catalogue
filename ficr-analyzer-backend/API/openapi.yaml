@@ -37,6 +37,59 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/ApiError'
+  /api/v1/ficr/results/onboardSeason/{season}:
+    post:
+      tags:
+        - results
+      summary: Onboard Season
+      description: Endpoint to onboard Season
+      operationId: onboardSeason
+      parameters:
+        - name: season
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '201':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiError'
+  /api/v1/ficr/results/onboard/{codPub}:
+    post:
+      tags:
+        - results
+      summary: Onboard Event
+      description: Endpoint to onboard Event
+      operationId: onboard_1
+      parameters:
+        - name: codPub
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: string
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiError'
   /api/v1/ficr/results/:
     get:
       tags:
@@ -86,6 +139,41 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/ApiError'
+  /api/v1/ficr/events/{eventIdentifier}:
+    get:
+      tags:
+        - events
+      summary: Get Events
+      description: Endpoint to query registered Events
+      operationId: getEvent
+      parameters:
+        - name: eventIdentifier
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EventInfo'
+        '404':
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiError'
   /api/v1/ficr/events/:
     get:
       tags:
@@ -118,7 +206,40 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Event'
+                  $ref: '#/components/schemas/EventInfo'
+        '404':
+          description: Not Found
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiError'
+        '500':
+          description: Internal Server Error
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/ApiError'
+  /api/v1/ficr/athletes/{athleteIdentifier}:
+    get:
+      tags:
+        - athletes
+      summary: Get Athlete
+      description: Endpoint to retrieve athlete
+      operationId: getAthletes
+      parameters:
+        - name: athleteIdentifier
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Athlete'
         '404':
           description: Not Found
           content:
@@ -168,7 +289,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Athlete'
+                  $ref: '#/components/schemas/AthleteInfo'
         '404':
           description: Not Found
           content:
@@ -188,6 +309,9 @@ components:
     Athlete:
       type: object
       properties:
+        athleteIdentifier:
+          type: string
+          format: uuid
         name:
           type: string
         surname:
@@ -201,19 +325,22 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Result'
+        events:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+            format: uuid
         societies:
           type: array
           items:
             $ref: '#/components/schemas/Society'
-        id:
-          type: integer
-          format: int64
-        athleteIdentifier:
-          type: string
-          format: uuid
     Event:
       type: object
       properties:
+        eventIdentifier:
+          type: string
+          format: uuid
         name:
           type: string
         place:
@@ -225,21 +352,26 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Result'
-        eventIdentifier:
-          type: string
-          format: uuid
+        athletes:
+          uniqueItems: true
+          type: array
+          items:
+            type: string
+            format: uuid
+        year:
+          type: integer
+          format: int32
     Result:
       type: object
       properties:
-        id:
-          type: integer
-          format: int64
         crew:
           type: array
           items:
             $ref: '#/components/schemas/Athlete'
         event:
           $ref: '#/components/schemas/Event'
+        society:
+          $ref: '#/components/schemas/Society'
         result:
           type: string
         competitionName:
@@ -249,6 +381,8 @@ components:
         categoryCode:
           type: string
         categoryName:
+          type: string
+        resultUrl:
           type: string
         crewNames:
           type: array
@@ -261,10 +395,45 @@ components:
       properties:
         name:
           type: string
-        societyIdentifier:
+        societyCode:
           type: string
-          format: uuid
         athletes:
           type: array
           items:
             $ref: '#/components/schemas/Athlete'
+        societyIdentifier:
+          type: string
+          format: uuid
+        societyAthletes:
+          type: array
+          items:
+            type: string
+    EventInfo:
+      type: object
+      properties:
+        name:
+          type: string
+        place:
+          type: string
+        date:
+          type: string
+          format: date-time
+        url:
+          type: string
+        eventIdentifier:
+          type: string
+          format: uuid
+        year:
+          type: integer
+          format: int32
+    AthleteInfo:
+      type: object
+      properties:
+        name:
+          type: string
+        surname:
+          type: string
+        athleteIdentifier:
+          type: string
+          format: uuid
+
