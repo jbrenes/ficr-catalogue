@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PagaiaCronos</string>
+    <string name="app_description">PagaiaCronos ti permette di sfogliare e analizzare i risultati ufficiali delle gare di canoa velocità della FICK. I dati sono disponibili offline e vengono aggiornati tramite sincronizzazione manuale o automatica.</string>
+
+    <!-- Bottom tabs -->
+    <string name="tab_results">Risultati</string>
+    <string name="tab_sync">Sincronizza</string>
+    <string name="tab_settings">Impostazioni</string>
+    <string name="tab_about">Info</string>
+
+    <!-- Filter bar -->
+    <string name="filter_title">Filtri</string>
+    <string name="filter_athlete">Atleta</string>
+    <string name="filter_athlete_hint">Cerca per nome…</string>
+    <string name="filter_club">Società</string>
+    <string name="filter_club_all">Tutte le società</string>
+    <string name="filter_boat_class">Classe barca</string>
+    <string name="filter_distance">Distanza</string>
+    <string name="filter_date_from">Dal</string>
+    <string name="filter_date_to">Al</string>
+    <string name="filter_venue">Campo gara</string>
+    <string name="filter_venue_all">Tutti i campi</string>
+    <string name="filter_active_count">%d attivi</string>
+    <string name="filter_reset">Reimposta</string>
+
+    <!-- Results list -->
+    <string name="results_empty_title">Nessun risultato</string>
+    <string name="results_empty_subtitle">Prova a modificare i filtri o sincronizza i dati.</string>
+    <string name="results_never_synced_title">Nessun dato</string>
+    <string name="results_never_synced_subtitle">Vai alla scheda Sincronizza per scaricare i risultati.</string>
+    <string name="result_rank">Pos.</string>
+    <string name="result_lane">Corsia</string>
+    <string name="result_time">Tempo</string>
+    <string name="result_gap">Distacco</string>
+    <string name="result_dns">DNS</string>
+    <string name="result_dnf">DNF</string>
+    <string name="result_dsq">DSQ</string>
+
+    <!-- Athlete profile -->
+    <string name="profile_personal_bests">Record personali</string>
+    <string name="profile_performance">Prestazioni nel tempo</string>
+    <string name="profile_all_results">Tutti i risultati</string>
+    <string name="profile_no_results">Nessuna gara registrata</string>
+    <string name="profile_pb_header_class">Classe</string>
+    <string name="profile_pb_header_dist">Dist.</string>
+    <string name="profile_pb_header_time">Tempo</string>
+    <string name="profile_chart_no_data">Dati insufficienti per il grafico</string>
+
+    <!-- Sync screen -->
+    <string name="sync_last_sync">Ultima sincronizzazione</string>
+    <string name="sync_never">Mai sincronizzato</string>
+    <string name="sync_records_updated">Record aggiornati</string>
+    <string name="sync_source_url">URL sorgente</string>
+    <string name="sync_now">Sincronizza ora</string>
+    <string name="sync_in_progress">Sincronizzazione in corso…</string>
+    <string name="sync_success">Sincronizzazione completata: %d record aggiornati</string>
+    <string name="sync_error">Errore: %s</string>
+    <string name="sync_no_network">Connessione non disponibile</string>
+    <string name="sync_history_title">Cronologia</string>
+    <string name="sync_history_empty">Nessuna sincronizzazione precedente</string>
+    <string name="sync_url_label">URL di sincronizzazione</string>
+
+    <!-- Settings screen -->
+    <string name="settings_sync_url">URL di sincronizzazione</string>
+    <string name="settings_auto_sync">Sincronizzazione automatica all\'avvio</string>
+    <string name="settings_auto_sync_desc">Scarica gli aggiornamenti all\'apertura dell\'app se la rete è disponibile</string>
+    <string name="settings_clear_data">Cancella dati locali</string>
+    <string name="settings_clear_data_confirm_title">Cancellare tutti i dati?</string>
+    <string name="settings_clear_data_confirm_body">Tutti i risultati, gli atleti e gli eventi salvati localmente verranno eliminati. Questa operazione non può essere annullata.</string>
+    <string name="settings_clear_data_success">Dati cancellati</string>
+
+    <!-- About screen -->
+    <string name="about_version">Versione</string>
+    <string name="about_credits">Crediti</string>
+    <string name="about_developer">Sviluppatore</string>
+    <string name="about_open_source">Librerie open source</string>
+    <string name="about_support">Supporta il progetto</string>
+    <string name="about_donate">Fai una donazione</string>
+    <string name="about_source_code">Codice sorgente</string>
+    <string name="about_privacy">Informativa sulla privacy</string>
+    <string name="about_opening_browser">Apertura browser…</string>
+
+    <!-- Common -->
+    <string name="action_cancel">Annulla</string>
+    <string name="action_confirm">Conferma</string>
+    <string name="action_ok">OK</string>
+    <string name="action_close">Chiudi</string>
+    <string name="loading">Caricamento…</string>
+    <string name="error_generic">Si è verificato un errore</string>
+    <string name="error_retry">Riprova</string>
+    <string name="distance_m">%dm</string>
+</resources>

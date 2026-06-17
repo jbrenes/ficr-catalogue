@@ -1,0 +1,580 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 2,
+    "identityHash": "f12fd21ff169d56e345c7a03f01c658b",
+    "entities": [
+      {
+        "tableName": "athletes",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `fick_id` TEXT NOT NULL, `first_name` TEXT NOT NULL, `last_name` TEXT NOT NULL, `birth_date` TEXT, `club` TEXT, `club_code` TEXT, `nationality` TEXT NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fickId",
+            "columnName": "fick_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "firstName",
+            "columnName": "first_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastName",
+            "columnName": "last_name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "birthDate",
+            "columnName": "birth_date",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "club",
+            "columnName": "club",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "clubCode",
+            "columnName": "club_code",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "nationality",
+            "columnName": "nationality",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_athletes_fick_id",
+            "unique": true,
+            "columnNames": [
+              "fick_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_athletes_fick_id` ON `${TABLE_NAME}` (`fick_id`)"
+          },
+          {
+            "name": "index_athletes_club_code",
+            "unique": false,
+            "columnNames": [
+              "club_code"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_athletes_club_code` ON `${TABLE_NAME}` (`club_code`)"
+          },
+          {
+            "name": "index_athletes_last_name",
+            "unique": false,
+            "columnNames": [
+              "last_name"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_athletes_last_name` ON `${TABLE_NAME}` (`last_name`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "events",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `fick_event_id` TEXT NOT NULL, `date` TEXT NOT NULL, `location` TEXT, `field_name` TEXT, `organiser` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fickEventId",
+            "columnName": "fick_event_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "date",
+            "columnName": "date",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "location",
+            "columnName": "location",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "fieldName",
+            "columnName": "field_name",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "organiser",
+            "columnName": "organiser",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_events_fick_event_id",
+            "unique": true,
+            "columnNames": [
+              "fick_event_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_events_fick_event_id` ON `${TABLE_NAME}` (`fick_event_id`)"
+          },
+          {
+            "name": "index_events_date",
+            "unique": false,
+            "columnNames": [
+              "date"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_events_date` ON `${TABLE_NAME}` (`date`)"
+          }
+        ],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "races",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `fick_race_id` TEXT NOT NULL, `event_id` INTEGER NOT NULL, `distance_m` INTEGER, `boat_class` TEXT, `gender` TEXT, `category_code` TEXT, `category_name` TEXT, `round_name` TEXT, `round_code` TEXT, `heat_number` INTEGER NOT NULL, FOREIGN KEY(`event_id`) REFERENCES `events`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fickRaceId",
+            "columnName": "fick_race_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "eventId",
+            "columnName": "event_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "distanceM",
+            "columnName": "distance_m",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "boatClass",
+            "columnName": "boat_class",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "gender",
+            "columnName": "gender",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "categoryCode",
+            "columnName": "category_code",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "categoryName",
+            "columnName": "category_name",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "roundName",
+            "columnName": "round_name",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "roundCode",
+            "columnName": "round_code",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "heatNumber",
+            "columnName": "heat_number",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_races_fick_race_id",
+            "unique": true,
+            "columnNames": [
+              "fick_race_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_races_fick_race_id` ON `${TABLE_NAME}` (`fick_race_id`)"
+          },
+          {
+            "name": "index_races_event_id",
+            "unique": false,
+            "columnNames": [
+              "event_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_races_event_id` ON `${TABLE_NAME}` (`event_id`)"
+          },
+          {
+            "name": "index_races_boat_class",
+            "unique": false,
+            "columnNames": [
+              "boat_class"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_races_boat_class` ON `${TABLE_NAME}` (`boat_class`)"
+          },
+          {
+            "name": "index_races_distance_m",
+            "unique": false,
+            "columnNames": [
+              "distance_m"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_races_distance_m` ON `${TABLE_NAME}` (`distance_m`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "events",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "event_id"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "results",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `fick_result_id` TEXT NOT NULL, `race_id` INTEGER NOT NULL, `lane` INTEGER, `rank` INTEGER, `time_ms` INTEGER, `gap_ms` INTEGER, `points` INTEGER, `dns` INTEGER NOT NULL, `dnf` INTEGER NOT NULL, `dsq` INTEGER NOT NULL, FOREIGN KEY(`race_id`) REFERENCES `races`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fickResultId",
+            "columnName": "fick_result_id",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "raceId",
+            "columnName": "race_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lane",
+            "columnName": "lane",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "rank",
+            "columnName": "rank",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "timeMs",
+            "columnName": "time_ms",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "gapMs",
+            "columnName": "gap_ms",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "points",
+            "columnName": "points",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "dns",
+            "columnName": "dns",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dnf",
+            "columnName": "dnf",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "dsq",
+            "columnName": "dsq",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_results_fick_result_id",
+            "unique": true,
+            "columnNames": [
+              "fick_result_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_results_fick_result_id` ON `${TABLE_NAME}` (`fick_result_id`)"
+          },
+          {
+            "name": "index_results_race_id",
+            "unique": false,
+            "columnNames": [
+              "race_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_results_race_id` ON `${TABLE_NAME}` (`race_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "races",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "race_id"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "race_athletes",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`result_id` INTEGER NOT NULL, `athlete_id` INTEGER NOT NULL, `seat_order` INTEGER NOT NULL, PRIMARY KEY(`result_id`, `athlete_id`), FOREIGN KEY(`result_id`) REFERENCES `results`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`athlete_id`) REFERENCES `athletes`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "resultId",
+            "columnName": "result_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "athleteId",
+            "columnName": "athlete_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "seatOrder",
+            "columnName": "seat_order",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "result_id",
+            "athlete_id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_race_athletes_result_id",
+            "unique": false,
+            "columnNames": [
+              "result_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_race_athletes_result_id` ON `${TABLE_NAME}` (`result_id`)"
+          },
+          {
+            "name": "index_race_athletes_athlete_id",
+            "unique": false,
+            "columnNames": [
+              "athlete_id"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_race_athletes_athlete_id` ON `${TABLE_NAME}` (`athlete_id`)"
+          }
+        ],
+        "foreignKeys": [
+          {
+            "table": "results",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "result_id"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          },
+          {
+            "table": "athletes",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "athlete_id"
+            ],
+            "referencedColumns": [
+              "id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "sync_log",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `synced_at` TEXT NOT NULL, `records_updated` INTEGER NOT NULL, `source_url` TEXT, `status` TEXT NOT NULL, `error_message` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "syncedAt",
+            "columnName": "synced_at",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "recordsUpdated",
+            "columnName": "records_updated",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sourceUrl",
+            "columnName": "source_url",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "status",
+            "columnName": "status",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "errorMessage",
+            "columnName": "error_message",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "clubs",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `club` TEXT, `club_code` TEXT)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "club",
+            "columnName": "club",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "clubCode",
+            "columnName": "club_code",
+            "affinity": "TEXT",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "id"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_clubs_club_code",
+            "unique": true,
+            "columnNames": [
+              "club_code"
+            ],
+            "orders": [],
+            "createSql": "CREATE UNIQUE INDEX IF NOT EXISTS `index_clubs_club_code` ON `${TABLE_NAME}` (`club_code`)"
+          }
+        ],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f12fd21ff169d56e345c7a03f01c658b')"
+    ]
+  }
+}

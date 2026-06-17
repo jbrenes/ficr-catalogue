@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PagaiaCronos</string>
+    <string name="app_description">PagaiaCronos lets Italian canoe sprint athletes and fans browse and analyse official FICK competition results. Data is available offline and updated via manual or automatic sync.</string>
+
+    <string name="tab_results">Results</string>
+    <string name="tab_sync">Sync</string>
+    <string name="tab_settings">Settings</string>
+    <string name="tab_about">About</string>
+
+    <string name="filter_title">Filters</string>
+    <string name="filter_athlete">Athlete</string>
+    <string name="filter_athlete_hint">Search by name…</string>
+    <string name="filter_club">Club</string>
+    <string name="filter_club_all">All clubs</string>
+    <string name="filter_boat_class">Boat class</string>
+    <string name="filter_distance">Distance</string>
+    <string name="filter_date_from">From</string>
+    <string name="filter_date_to">To</string>
+    <string name="filter_venue">Venue</string>
+    <string name="filter_venue_all">All venues</string>
+    <string name="filter_active_count">%d active</string>
+    <string name="filter_reset">Reset</string>
+
+    <string name="results_empty_title">No results</string>
+    <string name="results_empty_subtitle">Try changing the filters or sync data first.</string>
+    <string name="results_never_synced_title">No data</string>
+    <string name="results_never_synced_subtitle">Go to the Sync tab to download results.</string>
+    <string name="result_rank">Pos.</string>
+    <string name="result_lane">Lane</string>
+    <string name="result_time">Time</string>
+    <string name="result_gap">Gap</string>
+    <string name="result_dns">DNS</string>
+    <string name="result_dnf">DNF</string>
+    <string name="result_dsq">DSQ</string>
+
+    <string name="profile_personal_bests">Personal Bests</string>
+    <string name="profile_performance">Performance Over Time</string>
+    <string name="profile_all_results">All Results</string>
+    <string name="profile_no_results">No race recorded</string>
+    <string name="profile_pb_header_class">Class</string>
+    <string name="profile_pb_header_dist">Dist.</string>
+    <string name="profile_pb_header_time">Time</string>
+    <string name="profile_chart_no_data">Not enough data for chart</string>
+
+    <string name="sync_last_sync">Last sync</string>
+    <string name="sync_never">Never synced</string>
+    <string name="sync_records_updated">Records updated</string>
+    <string name="sync_source_url">Source URL</string>
+    <string name="sync_now">Sync now</string>
+    <string name="sync_in_progress">Syncing…</string>
+    <string name="sync_success">Sync complete: %d records updated</string>
+    <string name="sync_error">Error: %s</string>
+    <string name="sync_no_network">No network connection</string>
+    <string name="sync_history_title">History</string>
+    <string name="sync_history_empty">No previous syncs</string>
+    <string name="sync_url_label">Sync URL</string>
+
+    <string name="settings_sync_url">Sync URL</string>
+    <string name="settings_auto_sync">Auto-sync on launch</string>
+    <string name="settings_auto_sync_desc">Download updates when the app opens if network is available</string>
+    <string name="settings_clear_data">Clear local data</string>
+    <string name="settings_clear_data_confirm_title">Clear all data?</string>
+    <string name="settings_clear_data_confirm_body">All locally saved results, athletes and events will be deleted. This cannot be undone.</string>
+    <string name="settings_clear_data_success">Data cleared</string>
+
+    <string name="about_version">Version</string>
+    <string name="about_credits">Credits</string>
+    <string name="about_developer">Developer</string>
+    <string name="about_open_source">Open-source libraries</string>
+    <string name="about_support">Support the project</string>
+    <string name="about_donate">Make a donation</string>
+    <string name="about_source_code">Source code</string>
+    <string name="about_privacy">Privacy policy</string>
+    <string name="about_opening_browser">Opening browser…</string>
+
+    <string name="action_cancel">Cancel</string>
+    <string name="action_confirm">Confirm</string>
+    <string name="action_ok">OK</string>
+    <string name="action_close">Close</string>
+    <string name="loading">Loading…</string>
+    <string name="error_generic">An error occurred</string>
+    <string name="error_retry">Retry</string>
+    <string name="distance_m">%dm</string>
+</resources>
