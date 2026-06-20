@@ -102,11 +102,14 @@ def parse_race_result(raw: dict, manifest_code: str, tipologia: str,
     categories = set()  # for debugging: track unique category codes encountered
     distances = set()
     aCategory = {}
-    aCategory[cat.get("Cod")] = {
-        "category_code": cat.get("Cod"),
-        "category_name": cat.get("Ita")
-    }
-    distances.add(distance_m)
+    category_code = cat.get("Cod")
+    if category_code:
+        aCategory[category_code] = {
+            "category_code": category_code,
+            "category_name": cat.get("Ita")
+        }
+    if distance_m:
+        distances.add(distance_m)
     clubs = {}   # for debugging: track unique distances encountered
     for idx, row in enumerate(data.get("data", [])):
         categories.add(row.get("PlaCls", ""))

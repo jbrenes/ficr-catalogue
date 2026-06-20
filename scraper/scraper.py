@@ -75,7 +75,7 @@ def scrape_season(year: int, existing_ids: set[str], max_events: int = -1) -> li
                     parsed.append(chunk)
                 time.sleep(0.3)  # polite rate-limiting
             except Exception as e:
-                print(f"    WARNING: skipped race {cod_pub}/{cat}/{c1}/{c2}/{c3}: {e}")
+                print(f"    WARNING: skipped race {cod_pub}/{c0}/{c1}/{c2}/{c3}: {e}")
         processed_events += 1
         if 0 < max_events <= processed_events:
             print(f"  Reached max events limit ({max_events}), stopping early")
@@ -127,8 +127,12 @@ def main():
             existing = json.load(f)
             existing_athletes = {athlete['id']: athlete for athlete in existing.get("athletes", [])}
             existing_clubs= {club['club_code']: club for club in existing.get("clubs", [])}
-            existing_distances = existing.get("distances", [])
-            existing_categories = {cat['category_code']: cat for cat in existing.get("categories", [])}
+            # Drop legacy null/0 distance entries so they don't get re-merged into new output
+            existing_distances = [d for d in existing.get("distances", []) if d]
+            existing_categories = {
+                cat['category_code']: cat for cat in existing.get("categories", [])
+                if cat.get('category_code')
+            }
             existing_events = {event['fick_event_id']: event for event in existing.get("events", [])}
             existing_results = existing.get("results", [])
             existing_results_athletes = existing.get("results_athletes", [])
