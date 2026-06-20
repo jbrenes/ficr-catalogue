@@ -33,7 +33,7 @@ import it.ficr.pagaiacronos.data.local.entity.SyncLogEntity
         DistanceEntity::class
 
     ],
-    version = 6,
+    version = 7,
     exportSchema = true
 )
 abstract class FicrDatabase : RoomDatabase() {

@@ -4,7 +4,6 @@ import androidx.sqlite.db.SimpleSQLiteQuery
 import it.ficr.pagaiacronos.data.local.dao.ResultDao
 import it.ficr.pagaiacronos.data.local.dao.ResultRowProjection
 import it.ficr.pagaiacronos.data.local.dao.PersonalBestProjection
-import it.ficr.pagaiacronos.data.local.dao.TimeSeriesPoint
 import it.ficr.pagaiacronos.util.Constants
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -44,9 +43,6 @@ class ResultRepository @Inject constructor(private val resultDao: ResultDao) {
     suspend fun getPersonalBests(athleteId: Long): List<PersonalBestProjection> =
         resultDao.getPersonalBests(athleteId)
 
-    suspend fun getTimeSeries(athleteId: Long): List<TimeSeriesPoint> =
-        resultDao.getTimeSeriesForAthlete(athleteId)
-
     private fun buildPageQuery(
         filter: ResultsFilter,
         limit: Int,
@@ -56,11 +52,10 @@ class ResultRepository @Inject constructor(private val resultDao: ResultDao) {
         val conditions = mutableListOf<String>()
 
         if (filter.athleteName.isNotBlank()) {
-            conditions += """r.id IN (
-                SELECT ra2.result_id FROM results_athletes ra2
-                JOIN athletes a2 ON a2.id = ra2.athlete_id
-                WHERE lower(a2.last_name || ' ' || a2.first_name) LIKE ?
-            )"""
+            // Filters the crew-member join itself (not just which results qualify) so that
+            // the aggregated primary_athlete_id/name below resolves to the matched athlete,
+            // not an arbitrary teammate in the same boat.
+            conditions += "lower(a.last_name || ' ' || a.first_name) LIKE ?"
             args += "%${filter.athleteName.lowercase()}%"
         }
         if (filter.clubCode != null) {
@@ -88,18 +83,28 @@ class ResultRepository @Inject constructor(private val resultDao: ResultDao) {
         val where = if (conditions.isEmpty()) "" else "WHERE ${conditions.joinToString(" AND ")}"
 
         val sql = """
-            SELECT e.date, e.name as event_name, rc.distance_m, rc.boat_class, 
-                   GROUP_CONCAT(a.last_name || ' ' || a.first_name, ' / ') AS crew_names,
-                   r.time_ms, r.gap_ms,
-                   MIN(a.id) AS primary_athlete_id
+            SELECT r.id AS result_id, r.lane, r.rank, r.dns, r.dnf, r.dsq,
+                   e.date, e.location, e.name as event_name,
+                   rc.distance_m, rc.boat_class, rc.gender, rc.category_name, rc.round_name,
+                   MIN(a.last_name || ' ' || a.first_name) AS primary_athlete_name,
+                   MIN(a.id) AS primary_athlete_id,
+                   MIN(a.club) AS clubs,
+                   (SELECT
+                   GROUP_CONCAT(ai.last_name || ' ' || ai.first_name, ' / ')
+                   FROM athletes ai, results_athletes rai
+                   WHERE
+                    rai.result_id = r.id
+                    AND ai.id = rai.athlete_id
+                   ) AS crew_names,
+                   r.time_ms, r.gap_ms
             FROM results r
             JOIN races rc ON rc.id = r.race_id
             JOIN events e ON e.id = rc.event_id
             JOIN results_athletes ra ON ra.result_id = r.id
             JOIN athletes a ON a.id = ra.athlete_id
             $where
-            GROUP BY r.id
-            ORDER BY e.date DESC, r.rank ASC
+            GROUP BY r.id, a.id
+            ORDER BY e.date DESC, r.rank ASC, r.id ASC, a.id ASC
             LIMIT $limit OFFSET $offset
         """.trimIndent()
 

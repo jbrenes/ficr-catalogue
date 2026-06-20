@@ -104,7 +104,7 @@ fun ResultsScreen(
                 }
             } else {
 
-                    items(state.results, key = { "${it.resultId}"+it.primaryAthleteId }) { row ->
+                    items(state.results, key = { "${it.resultId}_${it.primaryAthleteId}" }) { row ->
                         ResultCard(
                             result = row,
                             onClick = { row.primaryAthleteId?.let { onAthleteClick(it) } },

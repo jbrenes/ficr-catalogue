@@ -6,6 +6,7 @@ import it.ficr.pagaiacronos.util.TimeUtils
 data class ResultRow(
     val resultId: Long,
     val primaryAthleteId: Long?,
+    val primaryAthleteName: String?,
     val crewNames: String,
     val club: String?,
     val date: String,
@@ -23,6 +24,7 @@ data class ResultRow(
     val dns: Boolean,
     val dnf: Boolean,
     val dsq: Boolean
+
 ) {
     val formattedTime: String
         get() = when {
@@ -57,5 +59,6 @@ fun ResultRowProjection.toDomain() = ResultRow(
     gapMs = gapMs,
     dns = dns,
     dnf = dnf,
-    dsq = dsq
+    dsq = dsq,
+    primaryAthleteName = primaryAthleteName
 )

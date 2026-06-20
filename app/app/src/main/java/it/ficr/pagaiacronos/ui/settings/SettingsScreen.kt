@@ -120,6 +120,55 @@ fun SettingsScreen(viewModel: SettingsViewModel = hiltViewModel()) {
 
             HorizontalDivider()
 
+            // Personal athlete
+            Column {
+                Text(
+                    stringResource(R.string.settings_my_athlete),
+                    style = MaterialTheme.typography.bodyLarge
+                )
+                Text(
+                    stringResource(R.string.settings_my_athlete_desc),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
+                Spacer(Modifier.height(8.dp))
+
+                val selected = state.personalAthlete
+                if (selected != null) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text("${selected.lastName} ${selected.firstName}")
+                        TextButton(onClick = viewModel::clearPersonalAthlete) {
+                            Text(stringResource(R.string.action_cancel))
+                        }
+                    }
+                } else {
+                    OutlinedTextField(
+                        value = state.athleteSearchQuery,
+                        onValueChange = viewModel::onAthleteSearchQueryChange,
+                        label = { Text(stringResource(R.string.filter_athlete_hint)) },
+                        modifier = Modifier.fillMaxWidth(),
+                        singleLine = true
+                    )
+                    state.athleteSearchResults.forEach { athlete ->
+                        TextButton(
+                            onClick = { viewModel.selectPersonalAthlete(athlete) },
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                "${athlete.lastName} ${athlete.firstName}${athlete.club?.let { " ($it)" } ?: ""}",
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+                    }
+                }
+            }
+
+            HorizontalDivider()
+
             Spacer(Modifier.weight(1f))
 
             // Clear data

@@ -8,4 +8,5 @@ sealed class Screen(val route: String) {
     data object AthleteProfile : Screen("athlete/{athleteId}") {
         fun withId(id: Long) = "athlete/$id"
     }
+    data object MyAthlete : Screen("my-athlete")
 }

@@ -19,6 +19,8 @@ class AthleteRepository @Inject constructor(
 
     suspend fun getById(id: Long): AthleteEntity? = athleteDao.getById(id)
 
+    suspend fun getClubsForAthlete(id: Long): List<String> = athleteDao.getClubsForAthlete(id)
+
     suspend fun getDistinctClubs(): List<ClubProjection> = athleteDao.getDistinctClubs()
 
     suspend fun getDistinctVenues(): List<String> = eventDao.getDistinctVenues()

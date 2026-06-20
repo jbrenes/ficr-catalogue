@@ -59,23 +59,30 @@ fun PersonalBestTable(
         }
         HorizontalDivider()
         bests.forEach { pb ->
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 12.dp, vertical = 8.dp),
-                horizontalArrangement = Arrangement.SpaceBetween
-            ) {
-                Text(pb.boatClass, modifier = Modifier.weight(1f))
-                Text("${pb.distanceM}m", modifier = Modifier.weight(1f))
-                Text(
-                    pb.formattedTime,
-                    fontWeight = FontWeight.Medium,
-                    modifier = Modifier.weight(1f)
-                )
-                Text(
-                    pb.raceCount.toString(),
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
+            Column(modifier = Modifier.padding(horizontal = 12.dp, vertical = 8.dp)) {
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(pb.boatClass, modifier = Modifier.weight(1f))
+                    Text("${pb.distanceM}m", modifier = Modifier.weight(1f))
+                    Text(
+                        pb.formattedTime,
+                        fontWeight = FontWeight.Medium,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Text(
+                        pb.raceCount.toString(),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+                if (!pb.eventName.isNullOrBlank()) {
+                    Text(
+                        pb.eventName,
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
             }
             HorizontalDivider(thickness = 0.5.dp)
         }

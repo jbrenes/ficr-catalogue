@@ -7,12 +7,9 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import it.ficr.pagaiacronos.data.local.entity.AthleteEntity
 import it.ficr.pagaiacronos.data.repository.AthleteRepository
 import it.ficr.pagaiacronos.data.repository.ResultRepository
-import it.ficr.pagaiacronos.domain.model.ChartPoint
-import it.ficr.pagaiacronos.domain.model.ChartSeries
 import it.ficr.pagaiacronos.domain.model.PersonalBest
 import it.ficr.pagaiacronos.domain.model.ResultRow
 import it.ficr.pagaiacronos.domain.model.toDomain
-import it.ficr.pagaiacronos.util.TimeUtils
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,8 +19,8 @@ import javax.inject.Inject
 
 data class AthleteUiState(
     val athlete: AthleteEntity? = null,
+    val clubs: List<String> = emptyList(),
     val personalBests: List<PersonalBest> = emptyList(),
-    val chartSeries: List<ChartSeries> = emptyList(),
     val results: List<ResultRow> = emptyList(),
     val isLoading: Boolean = true,
     val isLoadingMore: Boolean = false,
@@ -72,30 +69,15 @@ class AthleteViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val athlete = athleteRepository.getById(athleteId)
+                val clubs = athleteRepository.getClubsForAthlete(athleteId)
                 val pbs = resultRepository.getPersonalBests(athleteId).map { it.toDomain() }
-                val timeSeries = resultRepository.getTimeSeries(athleteId)
                 val results = resultRepository.getResultsForAthlete(athleteId, 0).map { it.toDomain() }
-
-                // Group time-series by boat_class+distance for chart
-                val seriesMap = timeSeries.groupBy { "${it.boatClass}_${it.distanceM}" }
-                val chartSeries = seriesMap.map { (key, pts) ->
-                    val first = pts.first()
-                    ChartSeries(
-                        label = "${first.boatClass ?: "?"} ${first.distanceM ?: "?"}m",
-                        boatClass = first.boatClass,
-                        distanceM = first.distanceM,
-                        points = pts.mapNotNull { pt ->
-                            val day = TimeUtils.isoDateToEpochDay(pt.date) ?: return@mapNotNull null
-                            ChartPoint(epochDay = day, timeMs = pt.timeMs)
-                        }
-                    )
-                }
 
                 _uiState.update {
                     it.copy(
                         athlete = athlete,
+                        clubs = clubs,
                         personalBests = pbs,
-                        chartSeries = chartSeries,
                         results = results,
                         isLoading = false,
                         hasMore = results.isNotEmpty()

@@ -32,6 +32,17 @@ interface AthleteDao {
     @Query("SELECT DISTINCT club, club_code FROM athletes WHERE club IS NOT NULL ORDER BY club ASC")
     suspend fun getDistinctClubs(): List<ClubProjection>
 
+    @Query(
+        """
+        SELECT DISTINCT a.club
+        FROM athletes a
+        JOIN results_athletes ra ON ra.athlete_id = a.id
+        WHERE a.id = :athleteId AND a.club IS NOT NULL
+        ORDER BY a.club ASC
+        """
+    )
+    suspend fun getClubsForAthlete(athleteId: Long): List<String>
+
     @Query("DELETE FROM athletes")
     suspend fun deleteAll()
 }

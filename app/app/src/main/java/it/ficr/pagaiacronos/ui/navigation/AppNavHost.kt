@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.List
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material3.Icon
@@ -26,6 +27,7 @@ import androidx.navigation.navArgument
 import it.ficr.pagaiacronos.R
 import it.ficr.pagaiacronos.ui.about.AboutScreen
 import it.ficr.pagaiacronos.ui.athlete.AthleteProfileScreen
+import it.ficr.pagaiacronos.ui.athlete.MyAthleteScreen
 import it.ficr.pagaiacronos.ui.results.ResultsScreen
 import it.ficr.pagaiacronos.ui.settings.SettingsScreen
 import it.ficr.pagaiacronos.ui.sync.SyncScreen
@@ -38,6 +40,7 @@ fun AppNavHost() {
 
     val tabs = listOf(
         Triple(Screen.Results, Icons.Default.List, R.string.tab_results),
+        Triple(Screen.MyAthlete, Icons.Default.Person, R.string.tab_athlete),
         Triple(Screen.Sync, Icons.Default.Sync, R.string.tab_sync),
         Triple(Screen.Settings, Icons.Default.Settings, R.string.tab_settings),
         Triple(Screen.About, Icons.Default.Info, R.string.tab_about)
@@ -81,6 +84,13 @@ fun AppNavHost() {
             composable(Screen.Results.route) {
                 ResultsScreen(onAthleteClick = { id ->
                     navController.navigate(Screen.AthleteProfile.withId(id))
+                })
+            }
+            composable(Screen.MyAthlete.route) {
+                MyAthleteScreen(onResolved = { id ->
+                    navController.navigate(Screen.AthleteProfile.withId(id)) {
+                        popUpTo(Screen.MyAthlete.route) { inclusive = true }
+                    }
                 })
             }
             composable(Screen.Sync.route) { SyncScreen() }

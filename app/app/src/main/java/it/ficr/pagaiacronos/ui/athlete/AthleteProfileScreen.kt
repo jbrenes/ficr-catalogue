@@ -35,7 +35,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import it.ficr.pagaiacronos.R
 import it.ficr.pagaiacronos.ui.components.EmptyState
-import it.ficr.pagaiacronos.ui.components.PerformanceChart
 import it.ficr.pagaiacronos.ui.components.PersonalBestTable
 import it.ficr.pagaiacronos.ui.components.ResultCard
 
@@ -91,15 +90,26 @@ fun AthleteProfileScreen(
                 end = 8.dp
             )
         ) {
-            // Club & nationality header
+            // Clubs & nationality header
             state.athlete?.let { a ->
                 item {
                     Column(modifier = Modifier.padding(bottom = 12.dp)) {
-                        Text(
-                            text = a.club ?: "",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
+                        val clubs = state.clubs
+                        if (clubs.isNotEmpty()) {
+                            clubs.forEach { club ->
+                                Text(
+                                    text = club,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                                )
+                            }
+                        } else if (!a.club.isNullOrBlank()) {
+                            Text(
+                                text = a.club,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
                         Text(
                             text = a.nationality,
                             style = MaterialTheme.typography.bodySmall,
@@ -116,17 +126,6 @@ fun AthleteProfileScreen(
                     PersonalBestTable(
                         bests = state.personalBests,
                         modifier = Modifier.fillMaxWidth()
-                    )
-                }
-            }
-
-            // Performance chart
-            if (state.chartSeries.isNotEmpty()) {
-                item {
-                    SectionHeader(stringResource(R.string.profile_performance))
-                    PerformanceChart(
-                        series = state.chartSeries,
-                        modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
                     )
                 }
             }

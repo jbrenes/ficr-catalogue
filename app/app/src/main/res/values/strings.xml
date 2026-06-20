@@ -8,6 +8,7 @@
     <string name="tab_sync">Sincronizza</string>
     <string name="tab_settings">Impostazioni</string>
     <string name="tab_about">Info</string>
+    <string name="tab_athlete">Atleta</string>
 
     <!-- Filter bar -->
     <string name="filter_title">Filtri</string>
@@ -39,13 +40,13 @@
 
     <!-- Athlete profile -->
     <string name="profile_personal_bests">Record personali</string>
-    <string name="profile_performance">Prestazioni nel tempo</string>
     <string name="profile_all_results">Tutti i risultati</string>
     <string name="profile_no_results">Nessuna gara registrata</string>
     <string name="profile_pb_header_class">Classe</string>
     <string name="profile_pb_header_dist">Dist.</string>
     <string name="profile_pb_header_time">Tempo</string>
-    <string name="profile_chart_no_data">Dati insufficienti per il grafico</string>
+    <string name="profile_no_personal_athlete">Nessun atleta personale impostato</string>
+    <string name="profile_no_personal_athlete_action">Imposta il tuo atleta nelle Impostazioni</string>
 
     <!-- Sync screen -->
     <string name="sync_last_sync">Ultima sincronizzazione</string>
@@ -69,6 +70,8 @@
     <string name="settings_clear_data_confirm_title">Cancellare tutti i dati?</string>
     <string name="settings_clear_data_confirm_body">Tutti i risultati, gli atleti e gli eventi salvati localmente verranno eliminati. Questa operazione non può essere annullata.</string>
     <string name="settings_clear_data_success">Dati cancellati</string>
+    <string name="settings_my_athlete">Il mio atleta</string>
+    <string name="settings_my_athlete_desc">Usato per la scheda Atleta in modo da mostrare subito i tuoi risultati</string>
 
     <!-- About screen -->
     <string name="about_version">Versione</string>

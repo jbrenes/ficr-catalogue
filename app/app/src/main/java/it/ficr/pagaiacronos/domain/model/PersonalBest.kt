@@ -7,7 +7,8 @@ data class PersonalBest(
     val boatClass: String,
     val distanceM: Int,
     val bestTimeMs: Long,
-    val raceCount: Int
+    val raceCount: Int,
+    val eventName: String?
 ) {
     val formattedTime: String get() = TimeUtils.formatTimeMs(bestTimeMs)
 }
@@ -16,5 +17,6 @@ fun PersonalBestProjection.toDomain() = PersonalBest(
     boatClass = boatClass,
     distanceM = distanceM,
     bestTimeMs = bestTimeMs,
-    raceCount = raceCount
+    raceCount = raceCount,
+    eventName = eventName
 )
