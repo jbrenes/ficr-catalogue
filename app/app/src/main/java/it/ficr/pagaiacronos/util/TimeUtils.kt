@@ -52,6 +52,13 @@ object TimeUtils {
         return "${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}"
     }
 
+    /** Formats an ISO "YYYY-MM-DD" date as "DD/MM/YYYY" for display. */
+    fun formatIsoDate(iso: String?): String? {
+        val parts = iso?.trim()?.split("-") ?: return null
+        if (parts.size != 3) return null
+        return "${parts[2]}/${parts[1]}/${parts[0]}"
+    }
+
     /** Returns epoch days for a YYYY-MM-DD date string (for chart x-axis). */
     fun isoDateToEpochDay(iso: String): Long? {
         return try {

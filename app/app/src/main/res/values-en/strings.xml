@@ -41,6 +41,7 @@
     <string name="profile_pb_header_class">Class</string>
     <string name="profile_pb_header_dist">Dist.</string>
     <string name="profile_pb_header_time">Time</string>
+    <string name="profile_birthday">Born %s</string>
     <string name="profile_no_personal_athlete">No personal athlete set</string>
     <string name="profile_no_personal_athlete_action">Set your athlete in Settings</string>
 

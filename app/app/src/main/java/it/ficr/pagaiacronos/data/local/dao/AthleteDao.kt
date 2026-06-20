@@ -34,11 +34,10 @@ interface AthleteDao {
 
     @Query(
         """
-        SELECT DISTINCT a.club
-        FROM athletes a
-        JOIN results_athletes ra ON ra.athlete_id = a.id
-        WHERE a.id = :athleteId AND a.club IS NOT NULL
-        ORDER BY a.club ASC
+        SELECT DISTINCT ra.club
+        FROM results_athletes ra
+        WHERE ra.athlete_id = :athleteId AND ra.club IS NOT NULL
+        ORDER BY ra.club ASC
         """
     )
     suspend fun getClubsForAthlete(athleteId: Long): List<String>

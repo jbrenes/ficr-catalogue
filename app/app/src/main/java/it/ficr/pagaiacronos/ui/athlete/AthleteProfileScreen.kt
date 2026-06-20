@@ -37,6 +37,7 @@ import it.ficr.pagaiacronos.R
 import it.ficr.pagaiacronos.ui.components.EmptyState
 import it.ficr.pagaiacronos.ui.components.PersonalBestTable
 import it.ficr.pagaiacronos.ui.components.ResultCard
+import it.ficr.pagaiacronos.util.TimeUtils
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -115,6 +116,13 @@ fun AthleteProfileScreen(
                             style = MaterialTheme.typography.bodySmall,
                             color = MaterialTheme.colorScheme.onSurfaceVariant
                         )
+                        TimeUtils.formatIsoDate(a.birthDate)?.let { birthday ->
+                            Text(
+                                text = stringResource(R.string.profile_birthday, birthday),
+                                style = MaterialTheme.typography.bodySmall,
+                                color = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        }
                     }
                 }
             }

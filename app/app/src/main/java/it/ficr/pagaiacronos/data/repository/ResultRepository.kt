@@ -88,7 +88,7 @@ class ResultRepository @Inject constructor(private val resultDao: ResultDao) {
                    rc.distance_m, rc.boat_class, rc.gender, rc.category_name, rc.round_name,
                    MIN(a.last_name || ' ' || a.first_name) AS primary_athlete_name,
                    MIN(a.id) AS primary_athlete_id,
-                   MIN(a.club) AS clubs,
+                   MIN(ra.club) AS clubs,
                    (SELECT
                    GROUP_CONCAT(ai.last_name || ' ' || ai.first_name, ' / ')
                    FROM athletes ai, results_athletes rai

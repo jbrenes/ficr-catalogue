@@ -79,7 +79,7 @@ interface ResultDao {
                ) AS crew_names,
                :athleteId AS primary_athlete_id,
                (SELECT a2.last_name || ' ' || a2.first_name FROM athletes a2 WHERE a2.id = :athleteId) AS primary_athlete_name,
-               (SELECT a3.club FROM athletes a3 WHERE a3.id = :athleteId) AS clubs
+               ra.club AS clubs
         FROM results r
         JOIN races rc ON rc.id = r.race_id
         JOIN events e ON e.id = rc.event_id

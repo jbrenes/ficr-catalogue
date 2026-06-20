@@ -27,5 +27,9 @@ import androidx.room.Index
 data class ResultAthleteEntity(
     @ColumnInfo(name = "result_id") val resultId: Long,
     @ColumnInfo(name = "athlete_id") val athleteId: Long,
-    @ColumnInfo(name = "seat_order") val seatOrder: Int = 0
+    @ColumnInfo(name = "seat_order") val seatOrder: Int = 0,
+    /** Club the athlete was registered under for THIS specific result, as opposed
+     *  to AthleteEntity.club which is just the most recently synced value. */
+    val club: String? = null,
+    @ColumnInfo(name = "club_code") val clubCode: String? = null
 )

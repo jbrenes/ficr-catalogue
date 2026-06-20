@@ -174,6 +174,11 @@ def parse_race_result(raw: dict, manifest_code: str, tipologia: str,
                 "fick_result_id": fick_result_id,
                 "fick_athlete_id": fid,
                 "seat_order": seat_idx,
+                # Club as registered for THIS specific race result — an athlete
+                # can race for different clubs across their career, so this is
+                # the source of truth for club history, not the athlete record.
+                "club": team_name or None,
+                "club_code": team_cod or None,
             })
 
     return {

@@ -186,7 +186,9 @@ class SyncRepository @Inject constructor(
                 ResultAthleteEntity(
                     resultId = resultId,
                     athleteId = athleteId,
-                    seatOrder = dto.seatOrder
+                    seatOrder = dto.seatOrder,
+                    club = dto.club,
+                    clubCode = dto.clubCode
                 )
             }
             db.resultDao().upsertResultsAthletes(linkEntities)

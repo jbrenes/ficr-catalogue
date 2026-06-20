@@ -73,5 +73,7 @@ data class CategoryDto(
 data class ResultAthleteDto(
     @SerializedName("fick_result_id") val fickResultId: String,
     @SerializedName("fick_athlete_id") val fickAthleteId: String,
-    @SerializedName("seat_order") val seatOrder: Int = 0
+    @SerializedName("seat_order") val seatOrder: Int = 0,
+    val club: String? = null,
+    @SerializedName("club_code") val clubCode: String? = null
 )
