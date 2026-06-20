@@ -121,6 +121,12 @@ def parse_race_result(raw: dict, manifest_code: str, tipologia: str,
         time_ms = _parse_time_ms(row.get("MemPrest"))
         gap_ms  = _parse_time_ms(row.get("Gap")) if row.get("Gap") else None
 
+        # Skip rows with no time that also aren't a recognised non-finish
+        # status (DNS/DNF/DSQ) — these are incomplete/junk entries rather
+        # than real results.
+        if time_ms is None and not (dns or dnf or dsq):
+            continue
+
         # Build crew list
         players = row.get("Players")
         if players:
