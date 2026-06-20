@@ -9,6 +9,8 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import it.ficr.pagaiacronos.data.local.FicrDatabase
 import it.ficr.pagaiacronos.data.local.dao.AthleteDao
+import it.ficr.pagaiacronos.data.local.dao.ClubDao
+import it.ficr.pagaiacronos.data.local.dao.DistanceDao
 import it.ficr.pagaiacronos.data.local.dao.EventDao
 import it.ficr.pagaiacronos.data.local.dao.RaceDao
 import it.ficr.pagaiacronos.data.local.dao.ResultDao
@@ -24,6 +26,7 @@ object DatabaseModule {
     @Singleton
     fun provideDatabase(@ApplicationContext context: Context): FicrDatabase =
         Room.databaseBuilder(context, FicrDatabase::class.java, Constants.DATABASE_NAME)
+            .fallbackToDestructiveMigration()
             .build()
 
     @Provides fun provideAthleteDao(db: FicrDatabase): AthleteDao = db.athleteDao()
@@ -31,4 +34,8 @@ object DatabaseModule {
     @Provides fun provideRaceDao(db: FicrDatabase): RaceDao = db.raceDao()
     @Provides fun provideResultDao(db: FicrDatabase): ResultDao = db.resultDao()
     @Provides fun provideSyncLogDao(db: FicrDatabase): SyncLogDao = db.syncLogDao()
+
+    @Provides fun provideClubDao(db: FicrDatabase): ClubDao = db.clubDao()
+
+    @Provides fun provideDistanceDao(db: FicrDatabase): DistanceDao = db.distanceDao()
 }

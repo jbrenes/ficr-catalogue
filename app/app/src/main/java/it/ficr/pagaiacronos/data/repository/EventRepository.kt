@@ -1,5 +1,6 @@
 package it.ficr.pagaiacronos.data.repository
 
+import androidx.room.Query
 import it.ficr.pagaiacronos.data.local.dao.AthleteDao
 import it.ficr.pagaiacronos.data.local.dao.ClubDao
 import it.ficr.pagaiacronos.data.local.dao.ClubProjection

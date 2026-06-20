@@ -4,7 +4,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import it.ficr.pagaiacronos.data.local.dao.ClubProjection
+import it.ficr.pagaiacronos.data.local.dao.EventProjection
 import it.ficr.pagaiacronos.data.repository.AthleteRepository
+import it.ficr.pagaiacronos.data.repository.ClubRepository
+import it.ficr.pagaiacronos.data.repository.DistanceRepository
+import it.ficr.pagaiacronos.data.repository.EventRepository
 import it.ficr.pagaiacronos.data.repository.ResultRepository
 import it.ficr.pagaiacronos.data.repository.ResultsFilter
 import it.ficr.pagaiacronos.domain.model.ResultRow
@@ -27,14 +31,18 @@ data class ResultsUiState(
     val hasMore: Boolean = true,
     val error: String? = null,
     val clubs: List<ClubProjection> = emptyList(),
-    val venues: List<String> = emptyList()
+    val venues: List<EventProjection> = emptyList(),
+    val distances: List<Int>? = emptyList()
 )
 
 @OptIn(FlowPreview::class)
 @HiltViewModel
 class ResultsViewModel @Inject constructor(
     private val resultRepository: ResultRepository,
-    private val athleteRepository: AthleteRepository
+    private val athleteRepository: AthleteRepository,
+    private val clubRepository: ClubRepository,
+    private val eventRepository: EventRepository,
+    private val distanceRepository: DistanceRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ResultsUiState(isLoading = true))
@@ -96,9 +104,10 @@ class ResultsViewModel @Inject constructor(
 
     private fun loadFilterOptions() {
         viewModelScope.launch {
-            val clubs = athleteRepository.getDistinctClubs()
-            val venues = athleteRepository.getDistinctVenues()
-            _uiState.update { it.copy(clubs = clubs, venues = venues) }
+            val clubs = clubRepository.getDistinctClubs()
+            val distances = distanceRepository.getAllDistances();
+            val venues = eventRepository.getDistinctEvents()
+            _uiState.update { it.copy(clubs = clubs, venues = venues, distances=distances) }
         }
     }
 }

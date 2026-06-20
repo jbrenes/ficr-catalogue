@@ -36,47 +36,30 @@ fun ResultCard(
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            // Rank bubble
-            Text(
-                text = if (result.dns || result.dnf || result.dsq) result.formattedTime
-                       else result.rank?.toString() ?: "-",
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                color = when (result.rank) {
-                    1 -> MaterialTheme.colorScheme.primary
-                    2, 3 -> MaterialTheme.colorScheme.secondary
-                    else -> MaterialTheme.colorScheme.onSurface
-                },
-                modifier = Modifier.padding(end = 12.dp)
-            )
+
 
             // Centre: athlete + event info
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = result.crewNames.ifBlank { "-" },
+                    text = "${result.date}  ${result.distanceM}   ",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    maxLines = 1
+                )
+                Text(
+                    text = "${result.boatClass} "+ result.crewNames.ifBlank { "-" },
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.SemiBold,
                     maxLines = 2
                 )
-                Text(
-                    text = result.club ?: "",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 1
-                )
-                Text(
-                    text = "${result.date}  ·  ${result.boatClassDistance}  ·  ${result.roundName ?: ""}",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    maxLines = 1
-                )
+
+
             }
 
             // Time + gap
             Column(horizontalAlignment = Alignment.End) {
                 Text(
-                    text = if (result.dns || result.dnf || result.dsq) result.formattedTime
-                           else result.formattedTime,
+                    text = result.formattedTime,
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.Medium
                 )

@@ -13,6 +13,7 @@ data class EventEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     @ColumnInfo(name = "fick_event_id") val fickEventId: String,
     val date: String,
+    val name: String?,
     val location: String? = null,
     @ColumnInfo(name = "field_name") val fieldName: String? = null,
     val organiser: String? = null

@@ -9,7 +9,7 @@ import androidx.room.RawQuery
 import androidx.sqlite.db.SupportSQLiteQuery
 import it.ficr.pagaiacronos.data.local.entity.AthleteEntity
 import it.ficr.pagaiacronos.data.local.entity.EventEntity
-import it.ficr.pagaiacronos.data.local.entity.RaceAthleteEntity
+import it.ficr.pagaiacronos.data.local.entity.ResultAthleteEntity
 import it.ficr.pagaiacronos.data.local.entity.RaceEntity
 import it.ficr.pagaiacronos.data.local.entity.ResultEntity
 
@@ -20,7 +20,7 @@ interface ResultDao {
     suspend fun upsertAll(results: List<ResultEntity>): List<Long>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun upsertRaceAthletes(links: List<RaceAthleteEntity>)
+    suspend fun upsertResultsAthletes(links: List<ResultAthleteEntity>)
 
     @Query("SELECT id, fick_result_id FROM results WHERE fick_result_id IN (:fickIds)")
     suspend fun getIdsByFickIds(fickIds: List<String>): List<ResultFickIdMapping>
@@ -29,7 +29,7 @@ interface ResultDao {
     @RawQuery(
         observedEntities = [
             ResultEntity::class, RaceEntity::class,
-            EventEntity::class, AthleteEntity::class, RaceAthleteEntity::class
+            EventEntity::class, AthleteEntity::class, ResultAthleteEntity::class
         ]
     )
     suspend fun getPage(query: SupportSQLiteQuery): List<ResultRowProjection>
@@ -38,7 +38,7 @@ interface ResultDao {
         """
         SELECT rc.boat_class, rc.distance_m, MIN(r.time_ms) AS best_time_ms, COUNT(*) AS race_count
         FROM results r
-        JOIN race_athletes ra ON ra.result_id = r.id
+        JOIN results_athletes ra ON ra.result_id = r.id
         JOIN races rc ON rc.id = r.race_id
         WHERE ra.athlete_id = :athleteId
           AND r.time_ms IS NOT NULL AND r.dns = 0 AND r.dnf = 0 AND r.dsq = 0
@@ -52,7 +52,7 @@ interface ResultDao {
         """
         SELECT r.time_ms, e.date, rc.boat_class, rc.distance_m
         FROM results r
-        JOIN race_athletes ra ON ra.result_id = r.id
+        JOIN results_athletes ra ON ra.result_id = r.id
         JOIN races rc ON rc.id = r.race_id
         JOIN events e ON e.id = rc.event_id
         WHERE ra.athlete_id = :athleteId
@@ -73,7 +73,7 @@ interface ResultDao {
         FROM results r
         JOIN races rc ON rc.id = r.race_id
         JOIN events e ON e.id = rc.event_id
-        JOIN race_athletes ra ON ra.result_id = r.id
+        JOIN results_athletes ra ON ra.result_id = r.id
         JOIN athletes a ON a.id = ra.athlete_id
         WHERE ra.athlete_id = :athleteId
         GROUP BY r.id
@@ -90,7 +90,7 @@ interface ResultDao {
     @Query("DELETE FROM results")
     suspend fun deleteAll()
 
-    @Query("DELETE FROM race_athletes")
+    @Query("DELETE FROM results_athletes")
     suspend fun deleteAllRaceAthletes()
 }
 
@@ -112,7 +112,7 @@ data class ResultRowProjection(
     @ColumnInfo(name = "round_name") val roundName: String?,
     val date: String,
     val location: String?,
-    @ColumnInfo(name = "field_name") val fieldName: String?,
+    @ColumnInfo(name = "event_name") val eventName: String?,
     @ColumnInfo(name = "crew_names") val crewNames: String?,
     @ColumnInfo(name = "primary_athlete_id") val primaryAthleteId: Long?,
     val clubs: String?

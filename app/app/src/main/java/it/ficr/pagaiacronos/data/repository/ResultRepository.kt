@@ -16,7 +16,7 @@ data class ResultsFilter(
     val distances: Set<Int> = emptySet(),
     val dateFrom: String? = null,
     val dateTo: String? = null,
-    val fieldName: String? = null
+    val fickEventId: String? = null
 ) {
     val activeCount: Int
         get() = listOf(
@@ -25,7 +25,7 @@ data class ResultsFilter(
             boatClasses.isNotEmpty(),
             distances.isNotEmpty(),
             dateFrom != null || dateTo != null,
-            fieldName != null
+            fickEventId != null
         ).count { it }
 }
 
@@ -57,7 +57,7 @@ class ResultRepository @Inject constructor(private val resultDao: ResultDao) {
 
         if (filter.athleteName.isNotBlank()) {
             conditions += """r.id IN (
-                SELECT ra2.result_id FROM race_athletes ra2
+                SELECT ra2.result_id FROM results_athletes ra2
                 JOIN athletes a2 ON a2.id = ra2.athlete_id
                 WHERE lower(a2.last_name || ' ' || a2.first_name) LIKE ?
             )"""
@@ -65,7 +65,7 @@ class ResultRepository @Inject constructor(private val resultDao: ResultDao) {
         }
         if (filter.clubCode != null) {
             conditions += """r.id IN (
-                SELECT ra3.result_id FROM race_athletes ra3
+                SELECT ra3.result_id FROM results_athletes ra3
                 JOIN athletes a3 ON a3.id = ra3.athlete_id
                 WHERE a3.club_code = ?
             )"""
@@ -83,21 +83,19 @@ class ResultRepository @Inject constructor(private val resultDao: ResultDao) {
         }
         if (filter.dateFrom != null) { conditions += "e.date >= ?"; args += filter.dateFrom }
         if (filter.dateTo != null)   { conditions += "e.date <= ?"; args += filter.dateTo }
-        if (filter.fieldName != null){ conditions += "e.field_name = ?"; args += filter.fieldName }
+        if (filter.fickEventId != null){ conditions += "e.fick_event_id = ?"; args += filter.fickEventId }
 
         val where = if (conditions.isEmpty()) "" else "WHERE ${conditions.joinToString(" AND ")}"
 
         val sql = """
-            SELECT r.id AS result_id, r.lane, r.rank, r.time_ms, r.gap_ms, r.dns, r.dnf, r.dsq,
-                   rc.distance_m, rc.boat_class, rc.gender, rc.category_name, rc.round_name,
-                   e.date, e.location, e.field_name,
+            SELECT e.date, e.name as event_name, rc.distance_m, rc.boat_class, 
                    GROUP_CONCAT(a.last_name || ' ' || a.first_name, ' / ') AS crew_names,
-                   MIN(a.id) AS primary_athlete_id,
-                   MIN(a.club) AS clubs
+                   r.time_ms, r.gap_ms,
+                   MIN(a.id) AS primary_athlete_id
             FROM results r
             JOIN races rc ON rc.id = r.race_id
             JOIN events e ON e.id = rc.event_id
-            JOIN race_athletes ra ON ra.result_id = r.id
+            JOIN results_athletes ra ON ra.result_id = r.id
             JOIN athletes a ON a.id = ra.athlete_id
             $where
             GROUP BY r.id

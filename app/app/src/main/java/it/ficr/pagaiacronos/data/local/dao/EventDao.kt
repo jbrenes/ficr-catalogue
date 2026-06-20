@@ -18,6 +18,9 @@ interface EventDao {
     @Query("SELECT DISTINCT field_name FROM events WHERE field_name IS NOT NULL ORDER BY field_name ASC")
     suspend fun getDistinctVenues(): List<String>
 
+    @Query("SELECT fick_event_id,name FROM events WHERE name IS NOT NULL ORDER BY name ASC")
+    suspend fun getDistinctEvents(): List<EventProjection>
+
     @Query("SELECT MIN(date) FROM events")
     suspend fun getMinDate(): String?
 
@@ -31,4 +34,11 @@ interface EventDao {
 data class EventFickIdMapping(
     val id: Long,
     val fick_event_id: String
+
+)
+
+data class EventProjection(
+    val fick_event_id: String,
+    val name: String
+
 )

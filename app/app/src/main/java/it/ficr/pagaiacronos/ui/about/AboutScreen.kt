@@ -83,7 +83,7 @@ fun AboutScreen(viewModel: AboutViewModel = hiltViewModel()) {
             HorizontalDivider()
 
             // Support
-            Text(
+            /*Text(
                 stringResource(R.string.about_support),
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.SemiBold
@@ -93,14 +93,14 @@ fun AboutScreen(viewModel: AboutViewModel = hiltViewModel()) {
             }
 
             HorizontalDivider()
-
+            */
             // Credits
             Text(
                 stringResource(R.string.about_credits),
                 style = MaterialTheme.typography.titleSmall,
                 fontWeight = FontWeight.SemiBold
             )
-            Text("${stringResource(R.string.about_developer)}: J. Brenes")
+            Text("${stringResource(R.string.about_developer)}: Juan Brenes")
             Text(
                 "${stringResource(R.string.about_open_source)}: Room, Retrofit, Hilt, Jetpack Compose, OkHttp",
                 style = MaterialTheme.typography.bodySmall,
@@ -113,9 +113,7 @@ fun AboutScreen(viewModel: AboutViewModel = hiltViewModel()) {
             TextButton(onClick = { openUrl("https://github.com/jbrenes/ficr-catalogue") }) {
                 Text(stringResource(R.string.about_source_code))
             }
-            TextButton(onClick = { /* placeholder */ }) {
-                Text(stringResource(R.string.about_privacy))
-            }
+
         }
     }
 }

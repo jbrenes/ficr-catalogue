@@ -1,5 +1,6 @@
 package it.ficr.pagaiacronos.ui.results
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,6 +29,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import it.ficr.pagaiacronos.R
+
 import it.ficr.pagaiacronos.ui.components.EmptyState
 import it.ficr.pagaiacronos.ui.components.FilterBar
 import it.ficr.pagaiacronos.ui.components.ResultCard
@@ -42,6 +44,7 @@ fun ResultsScreen(
     val filter by viewModel.filter.collectAsState()
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
     val listState = rememberLazyListState()
+
 
     // Trigger pagination when near the end
     val shouldLoadMore by remember {
@@ -79,6 +82,7 @@ fun ResultsScreen(
                     filter = filter,
                     clubs = state.clubs,
                     venues = state.venues,
+                    state.distances,
                     athleteSuggestions = emptyList(),
                     onFilterChange = viewModel::updateFilter,
                     modifier = Modifier.fillMaxWidth().padding(bottom = 8.dp)
@@ -99,15 +103,18 @@ fun ResultsScreen(
                     )
                 }
             } else {
-                items(state.results, key = { it.resultId }) { row ->
-                    ResultCard(
-                        result = row,
-                        onClick = { row.primaryAthleteId?.let { onAthleteClick(it) } },
-                        modifier = Modifier.padding(vertical = 4.dp)
-                    )
-                }
-                if (state.isLoadingMore) {
-                    item {
+
+                    items(state.results, key = { "${it.resultId}"+it.primaryAthleteId }) { row ->
+                        ResultCard(
+                            result = row,
+                            onClick = { row.primaryAthleteId?.let { onAthleteClick(it) } },
+
+                            modifier = Modifier.padding(vertical = 4.dp)
+                        )
+                    }
+
+                    if (state.isLoadingMore) {
+                        item {
                         LinearProgressIndicator(modifier = Modifier.fillMaxWidth().padding(8.dp))
                     }
                 }

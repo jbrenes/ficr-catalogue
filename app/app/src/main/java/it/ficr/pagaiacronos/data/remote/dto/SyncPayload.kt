@@ -8,7 +8,10 @@ data class SyncPayload(
     val events: List<EventDto> = emptyList(),
     val races: List<RaceDto> = emptyList(),
     val results: List<ResultDto> = emptyList(),
-    @SerializedName("race_athletes") val raceAthletes: List<RaceAthleteDto> = emptyList()
+    val clubs: List<ClubDto> = emptyList(),
+    val categories: List<CategoryDto> = emptyList(),
+    val distances: List<Int> = emptyList(),
+    @SerializedName("results_athletes") val resultsAthletes: List<ResultAthleteDto> = emptyList()
 )
 
 data class AthleteDto(
@@ -27,7 +30,8 @@ data class EventDto(
     val date: String,
     val location: String? = null,
     @SerializedName("field_name") val fieldName: String? = null,
-    val organiser: String? = null
+    val organiser: String? = null,
+    val name: String?
 )
 
 data class RaceDto(
@@ -57,8 +61,16 @@ data class ResultDto(
     val dnf: Boolean = false,
     val dsq: Boolean = false
 )
+data class ClubDto(
+    @SerializedName("club_code") val clubCode: String,
+    @SerializedName("club") val club: String,
+)
 
-data class RaceAthleteDto(
+data class CategoryDto(
+    @SerializedName("category_code") val categoryCode: String,
+    @SerializedName("category_name") val categoryName: String
+)
+data class ResultAthleteDto(
     @SerializedName("fick_result_id") val fickResultId: String,
     @SerializedName("fick_athlete_id") val fickAthleteId: String,
     @SerializedName("seat_order") val seatOrder: Int = 0

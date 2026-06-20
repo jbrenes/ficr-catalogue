@@ -33,6 +33,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import it.ficr.pagaiacronos.R
 import it.ficr.pagaiacronos.data.local.dao.ClubProjection
+import it.ficr.pagaiacronos.data.local.dao.EventProjection
 import it.ficr.pagaiacronos.data.repository.ResultsFilter
 import it.ficr.pagaiacronos.util.Constants
 
@@ -41,7 +42,8 @@ import it.ficr.pagaiacronos.util.Constants
 fun FilterBar(
     filter: ResultsFilter,
     clubs: List<ClubProjection>,
-    venues: List<String>,
+    venues: List<EventProjection>,
+    distances: List<Int>?,
     athleteSuggestions: List<String>,
     onFilterChange: (ResultsFilter) -> Unit,
     modifier: Modifier = Modifier
@@ -113,7 +115,7 @@ fun FilterBar(
                     // Distance chips
                     ChipGroup(
                         label = stringResource(R.string.filter_distance),
-                        options = Constants.DISTANCES,
+                        options = distances!!,
                         selected = filter.distances,
                         onToggle = { d ->
                             val next = if (d in filter.distances)
@@ -168,7 +170,7 @@ fun FilterBar(
                         onExpandedChange = { venueMenuExpanded = it }
                     ) {
                         OutlinedTextField(
-                            value = filter.fieldName ?: stringResource(R.string.filter_venue_all),
+                            value = filter.fickEventId ?: stringResource(R.string.filter_venue_all),
                             onValueChange = {},
                             readOnly = true,
                             label = { Text(stringResource(R.string.filter_venue)) },
@@ -184,15 +186,15 @@ fun FilterBar(
                             DropdownMenuItem(
                                 text = { Text(stringResource(R.string.filter_venue_all)) },
                                 onClick = {
-                                    onFilterChange(filter.copy(fieldName = null))
+                                    onFilterChange(filter.copy(fickEventId = null))
                                     venueMenuExpanded = false
                                 }
                             )
                             venues.forEach { v ->
                                 DropdownMenuItem(
-                                    text = { Text(v) },
+                                    text = { Text(v.name) },
                                     onClick = {
-                                        onFilterChange(filter.copy(fieldName = v))
+                                        onFilterChange(filter.copy(fickEventId = v.fick_event_id))
                                         venueMenuExpanded = false
                                     }
                                 )

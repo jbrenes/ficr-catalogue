@@ -15,5 +15,6 @@ interface CategoryDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertAll(category: List<CategoryEntity>): List<Long>
 
-
+    @Query("DELETE FROM categories")
+    suspend fun deleteCategories()
 }

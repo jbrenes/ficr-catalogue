@@ -19,4 +19,7 @@ interface ClubDao {
 
     @Query("SELECT DISTINCT club, club_code FROM clubs WHERE club IS NOT NULL ORDER BY club ASC")
     suspend fun getDistinctClubs(): List<ClubProjection>
+
+    @Query("DELETE FROM clubs")
+    suspend fun deleteClubs()
 }

@@ -18,5 +18,7 @@ interface DistanceDao {
     @Query("SELECT distance FROM distances")
     suspend fun getAllDistances(): List<Int>?
 
+    @Query("DELETE FROM distances")
+    suspend fun deleteDistances()
 
 }
