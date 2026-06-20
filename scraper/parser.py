@@ -108,7 +108,7 @@ def parse_race_result(raw: dict, manifest_code: str, tipologia: str,
     }
     distances.add(distance_m)
     clubs = {}   # for debugging: track unique distances encountered
-    for row in data.get("data", []):
+    for idx, row in enumerate(data.get("data", [])):
         categories.add(row.get("PlaCls", ""))
         dns = str(row.get("PlaCls", "")).upper() == "NP" or str(row.get("MemPrest", "")).upper() == "NP"
         dnf = str(row.get("MemPrest", "")).upper() == "NA"
@@ -125,7 +125,13 @@ def parse_race_result(raw: dict, manifest_code: str, tipologia: str,
         else:
             crew = [row]  # solo boat: athlete fields are at top level
 
-        fick_result_id = f"{fick_race_id}_{row.get('PlaCod', '')}"
+        # PlaCod is not guaranteed unique per boat within a race (it can repeat
+        # or be blank across different lanes), which previously caused distinct
+        # boats to collapse into the same result during sync. Lane is unique
+        # per boat within a race; fall back to row position if lane is missing.
+        lane_val = row.get("PlaLane")
+        result_suffix = lane_val if lane_val not in (None, "") else f"idx{idx}"
+        fick_result_id = f"{fick_race_id}_{result_suffix}"
 
         result = {
             "id": fick_result_id,
