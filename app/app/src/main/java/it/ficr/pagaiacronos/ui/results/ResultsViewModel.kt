@@ -11,6 +11,7 @@ import it.ficr.pagaiacronos.data.repository.DistanceRepository
 import it.ficr.pagaiacronos.data.repository.EventRepository
 import it.ficr.pagaiacronos.data.repository.ResultRepository
 import it.ficr.pagaiacronos.data.repository.ResultsFilter
+import it.ficr.pagaiacronos.data.repository.SyncRepository
 import it.ficr.pagaiacronos.domain.model.ResultRow
 import it.ficr.pagaiacronos.domain.model.toDomain
 import kotlinx.coroutines.FlowPreview
@@ -19,6 +20,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -42,7 +44,8 @@ class ResultsViewModel @Inject constructor(
     private val athleteRepository: AthleteRepository,
     private val clubRepository: ClubRepository,
     private val eventRepository: EventRepository,
-    private val distanceRepository: DistanceRepository
+    private val distanceRepository: DistanceRepository,
+    private val syncRepository: SyncRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ResultsUiState(isLoading = true))
@@ -54,12 +57,20 @@ class ResultsViewModel @Inject constructor(
     private var currentPage = 0
 
     init {
-        loadFilterOptions()
+        observeFilterOptions()
         // Reload on filter change (debounced for text input)
         viewModelScope.launch {
             _filter
                 .debounce(300)
                 .distinctUntilChanged()
+                .collect { applyFilter() }
+        }
+        // Reload after a sync completes, even if the filter hasn't changed
+        viewModelScope.launch {
+            syncRepository.getRecentLogsFlow()
+                .map { it.firstOrNull()?.id }
+                .distinctUntilChanged()
+                .drop(1)
                 .collect { applyFilter() }
         }
     }
@@ -102,12 +113,21 @@ class ResultsViewModel @Inject constructor(
         }
     }
 
-    private fun loadFilterOptions() {
+    private fun observeFilterOptions() {
         viewModelScope.launch {
-            val clubs = clubRepository.getDistinctClubs()
-            val distances = distanceRepository.getAllDistances();
-            val venues = eventRepository.getDistinctEvents()
-            _uiState.update { it.copy(clubs = clubs, venues = venues, distances=distances) }
+            clubRepository.getDistinctClubsFlow().collect { clubs ->
+                _uiState.update { it.copy(clubs = clubs) }
+            }
+        }
+        viewModelScope.launch {
+            distanceRepository.getAllDistancesFlow().collect { distances ->
+                _uiState.update { it.copy(distances = distances) }
+            }
+        }
+        viewModelScope.launch {
+            eventRepository.getDistinctEventsFlow().collect { venues ->
+                _uiState.update { it.copy(venues = venues) }
+            }
         }
     }
 }

@@ -77,8 +77,9 @@ fun ResultCard(
                     )
                 }
 
+                val crewSuffix = if (result.boatClass == "K1") "" else "(" + result.crewNames.ifBlank { "-" } + ")"
                 Text(
-                    text = "${result.boatClass} "+result.primaryAthleteName+"(" + result.crewNames.ifBlank { "-" }+")",
+                    text = "${result.boatClass} " + result.primaryAthleteName + crewSuffix,
                     style = MaterialTheme.typography.bodyMedium,
                     fontWeight = FontWeight.SemiBold,
                     maxLines = 2

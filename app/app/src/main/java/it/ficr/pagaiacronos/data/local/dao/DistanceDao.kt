@@ -6,6 +6,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import it.ficr.pagaiacronos.data.local.entity.ClubEntity
 import it.ficr.pagaiacronos.data.local.entity.DistanceEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface DistanceDao {
@@ -15,8 +16,8 @@ interface DistanceDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertAll(distances: List<DistanceEntity>)
 
-    @Query("SELECT distance FROM distances")
-    suspend fun getAllDistances(): List<Int>?
+    @Query("SELECT distance FROM distances ORDER BY distance ASC")
+    fun getAllDistancesFlow(): Flow<List<Int>>
 
     @Query("DELETE FROM distances")
     suspend fun deleteDistances()

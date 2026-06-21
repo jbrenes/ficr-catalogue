@@ -30,7 +30,14 @@ class SyncRepository @Inject constructor(
 ) {
     companion object {
         private const val TAG = "SyncRepository"
+        // SQLite caps bound variables per statement (default 999); chunk
+        // "IN (...)" lookups well under that to stay safe across devices.
+        private const val SQL_CHUNK_SIZE = 900
     }
+
+    /** Runs an "IN (:ids)" style lookup in safe-sized batches and flattens the results. */
+    private suspend fun <T, R> chunkedLookup(ids: List<T>, query: suspend (List<T>) -> List<R>): List<R> =
+        ids.chunked(SQL_CHUNK_SIZE).flatMap { chunk -> query(chunk) }
     fun getRecentLogsFlow(): Flow<List<SyncLogEntity>> = syncLogDao.getRecentLogsFlow()
 
     suspend fun getLatestLog(): SyncLogEntity? = syncLogDao.getLatest()
@@ -74,9 +81,9 @@ class SyncRepository @Inject constructor(
             db.athleteDao().upsertAll(athleteEntities)
             count += athleteEntities.size
 
-            val athleteIdMap = db.athleteDao()
-                .getIdsByFickIds(payload.athletes.map { it.id })
-                .associate { it.fick_id to it.id }
+            val athleteIdMap = chunkedLookup(payload.athletes.map { it.id }) { chunk ->
+                db.athleteDao().getIdsByFickIds(chunk)
+            }.associate { it.fick_id to it.id }
 
             // 2. Events
             val eventEntities = payload.events.map { dto ->
@@ -92,9 +99,9 @@ class SyncRepository @Inject constructor(
             db.eventDao().upsertAll(eventEntities)
             count += eventEntities.size
 
-            val eventIdMap = db.eventDao()
-                .getIdsByFickIds(payload.events.map { it.fickEventId })
-                .associate { it.fick_event_id to it.id }
+            val eventIdMap = chunkedLookup(payload.events.map { it.fickEventId }) { chunk ->
+                db.eventDao().getIdsByFickIds(chunk)
+            }.associate { it.fick_event_id to it.id }
 
             // Clubs
             val clubEntities = payload.clubs.map { dto ->
@@ -108,7 +115,9 @@ class SyncRepository @Inject constructor(
             db.clubDao().upsertAll(clubEntities)
             count += clubEntities.size
 
-            val categoryEntities = payload.categories.map { dto ->
+            val categoryEntities = payload.categories
+                .filter { dto -> !dto.categoryCode.isNullOrBlank() && !dto.categoryName.isNullOrBlank() }
+                .map { dto ->
                 CategoryEntity(
                     categoryCode = dto.categoryCode,
                     categoryName = dto.categoryName
@@ -122,7 +131,9 @@ class SyncRepository @Inject constructor(
             count += categoryEntities.size
 
 
-            val distanceEntities = payload.distances.map { dto ->
+            val distanceEntities = payload.distances
+                .filter { dto -> dto != 0 }
+                .map { dto ->
                 DistanceEntity(
                     distance = dto,
 
@@ -152,9 +163,9 @@ class SyncRepository @Inject constructor(
             db.raceDao().upsertAll(raceEntities)
             count += raceEntities.size
 
-            val raceIdMap = db.raceDao()
-                .getIdsByFickIds(payload.races.map { it.fickRaceId })
-                .associate { it.fick_race_id to it.id }
+            val raceIdMap = chunkedLookup(payload.races.map { it.fickRaceId }) { chunk ->
+                db.raceDao().getIdsByFickIds(chunk)
+            }.associate { it.fick_race_id to it.id }
 
             // 4. Results
             val resultEntities = payload.results.mapNotNull { dto ->
@@ -175,9 +186,9 @@ class SyncRepository @Inject constructor(
             db.resultDao().upsertAll(resultEntities)
             count += resultEntities.size
 
-            val resultIdMap = db.resultDao()
-                .getIdsByFickIds(payload.results.map { it.fickResultId })
-                .associate { it.fick_result_id to it.id }
+            val resultIdMap = chunkedLookup(payload.results.map { it.fickResultId }) { chunk ->
+                db.resultDao().getIdsByFickIds(chunk)
+            }.associate { it.fick_result_id to it.id }
 
             // 5. Race-athlete links
             val linkEntities = payload.resultsAthletes.mapNotNull { dto ->

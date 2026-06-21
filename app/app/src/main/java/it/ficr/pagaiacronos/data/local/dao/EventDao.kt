@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import it.ficr.pagaiacronos.data.local.entity.EventEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface EventDao {
@@ -19,7 +20,7 @@ interface EventDao {
     suspend fun getDistinctVenues(): List<String>
 
     @Query("SELECT fick_event_id,name FROM events WHERE name IS NOT NULL ORDER BY name ASC")
-    suspend fun getDistinctEvents(): List<EventProjection>
+    fun getDistinctEventsFlow(): Flow<List<EventProjection>>
 
     @Query("SELECT MIN(date) FROM events")
     suspend fun getMinDate(): String?

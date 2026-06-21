@@ -5,6 +5,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import it.ficr.pagaiacronos.data.local.entity.ClubEntity
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface ClubDao {
@@ -18,7 +19,7 @@ interface ClubDao {
     suspend fun getByClubCode(clubCode: String): ClubEntity?
 
     @Query("SELECT DISTINCT club, club_code FROM clubs WHERE club IS NOT NULL ORDER BY club ASC")
-    suspend fun getDistinctClubs(): List<ClubProjection>
+    fun getDistinctClubsFlow(): Flow<List<ClubProjection>>
 
     @Query("DELETE FROM clubs")
     suspend fun deleteClubs()
