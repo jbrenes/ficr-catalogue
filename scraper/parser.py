@@ -72,8 +72,14 @@ def parse_race_result(raw: dict, manifest_code: str, tipologia: str,
     gender     = _derive_gender(cat.get("Cod", ""))
     date_iso   = _parse_date(evt.get("Date", ""))
 
-    fick_race_id = f"{manifest_code}_{tipologia}_{round_cod}_{heat_cod}"
-   
+    # tipologia/round_cod/heat_cod alone are not unique per race: different
+    # categories (e.g. Senior vs Master) racing the same boat class/round/heat
+    # are fetched as separate pages but share those codes, so without the
+    # category code distinct crews collapsed into the same race/result id and
+    # their athletes got merged into one crew (the "wrong crew" bug).
+    category_cod = cat.get("Cod", "") or "NOCAT"
+    fick_race_id = f"{manifest_code}_{tipologia}_{round_cod}_{heat_cod}_{category_cod}"
+
     race = {
         "id": fick_race_id,
         "fick_race_id": fick_race_id,
